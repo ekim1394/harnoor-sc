@@ -61,7 +61,7 @@ export default function Schedule(props) {
                 <Flex variant='center'>
                     <PayPalScriptProvider options={
                         {
-                            clientId: process.env.REACT_APP_PAYPAL_CLIENT_ID,
+                                clientId: "AfJI1B6OY9dOr4-tkGAnFdqEE96782Phgmw1I5XZ2ftHlBKNrBhse9ozglYUP303Fv3aOcS3AFXpH-YP",
                             "enable-funding": "venmo"
                         }
                     }>
