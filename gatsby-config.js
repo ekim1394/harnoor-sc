@@ -5,6 +5,7 @@ require("dotenv").config({
 })
 
 module.exports = {
+    pathPrefix: "/harnoor-sc",
     siteMetadata: {
         siteUrl: "https://gatsbycontentfulhomepage.gatsbyjs.io/",
         title: "Gatsby Contentful Homepage Starter",
@@ -37,6 +38,5 @@ module.exports = {
                 icon: "src/favicon.png",
             },
         },
-        `gatsby-plugin-modal-routing`,
     ],
 }
