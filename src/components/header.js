@@ -1,6 +1,5 @@
 import * as React from "react"
 import { graphql, useStaticQuery } from "gatsby"
-import { Menu, X } from "react-feather"
 import {
   Container,
   Flex,
@@ -8,8 +7,6 @@ import {
   Space,
   NavLink,
   Button,
-  InteractiveIcon,
-  Nudge,
   VisuallyHidden,
 } from "./ui"
 import {
