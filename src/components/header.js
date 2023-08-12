@@ -19,8 +19,6 @@ import {
   mobileHeaderNavWrapper,
   mobileNavSVGColorWrapper,
 } from "./header.css"
-import NavItemGroup from "./nav-item-group"
-import BrandLogo from "./brand-logo"
 
 export default function Header() {
   const data = useStaticQuery(graphql`
@@ -77,26 +75,13 @@ export default function Header() {
         <Flex variant="spaceBetween">
           <NavLink to="/">
             <VisuallyHidden>Home</VisuallyHidden>
-            <BrandLogo />
           </NavLink>
           <nav>
             <FlexList gap={4}>
-              {navItems &&
-                navItems.map((navItem) => (
-                  <li key={navItem.id}>
-                    {navItem.navItemType === "Group" ? (
-                      <NavItemGroup
-                        name={navItem.name}
-                        navItems={navItem.navItems}
-                      />
-                    ) : (
-                      <NavLink to={navItem.href}>{navItem.text}</NavLink>
-                    )}
-                  </li>
-                ))}
+              { navItems }
             </FlexList>
           </nav>
-          <div>{cta && <Button to={cta.href}>{cta.text}</Button>}</div>
+          <div>{cta && <Button to={cta.href} >{cta.text}</Button>}</div>
         </Flex>
       </Container>
       <Container className={mobileHeaderNavWrapper[isOpen ? "open" : "closed"]}>
@@ -109,7 +94,6 @@ export default function Header() {
           >
             <NavLink to="/">
               <VisuallyHidden>Home</VisuallyHidden>
-              <BrandLogo />
             </NavLink>
           </span>
           <Flex>
@@ -121,7 +105,7 @@ export default function Header() {
                 </Button>
               )}
             </div>
-            <Nudge right={3}>
+            {/* <Nudge right={3}>
               <InteractiveIcon
                 title="Toggle menu"
                 onClick={() => setOpen(!isOpen)}
@@ -131,7 +115,7 @@ export default function Header() {
               >
                 {isOpen ? <X /> : <Menu />}
               </InteractiveIcon>
-            </Nudge>
+            </Nudge> */}
           </Flex>
         </Flex>
       </Container>
@@ -141,16 +125,11 @@ export default function Header() {
             <FlexList responsive variant="stretch">
               {navItems?.map((navItem) => (
                 <li key={navItem.id}>
-                  {navItem.navItemType === "Group" ? (
-                    <NavItemGroup
-                      name={navItem.name}
-                      navItems={navItem.navItems}
-                    />
-                  ) : (
+                  {
                     <NavLink to={navItem.href} className={mobileNavLink}>
                       {navItem.text}
                     </NavLink>
-                  )}
+                  }
                 </li>
               ))}
             </FlexList>

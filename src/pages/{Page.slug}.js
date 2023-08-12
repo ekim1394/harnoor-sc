@@ -6,6 +6,22 @@ import SEOHead from "../components/head"
 
 export default function Page(props) {
   const { page } = props.data
+  console.log(page)
+  const specialPages = ['terms', 'privacy'].includes(page.slug)
+  if (specialPages)  {
+    return (
+        <Box paddingY={5}>
+        <Container width="narrow">
+          <Heading as="h1">{page.title}</Heading>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: page.html,
+            }}
+          />
+        </Container>
+      </Box>
+        )
+    } 
 
   return (
     <Layout>

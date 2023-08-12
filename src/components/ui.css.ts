@@ -158,6 +158,12 @@ export const list = style({
   margin: 0,
 })
 
+export const listItems = style({
+    width: '15%',
+    float: 'left',
+    listStyle: "none"
+})
+
 export const padding = styleVariants(theme.space, (padding) => ({ padding }))
 export const paddingY = styleVariants(theme.space, (padding) => ({
   paddingTop: padding,

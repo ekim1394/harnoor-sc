@@ -22,7 +22,7 @@ export default function HomepageCta(props) {
         <Text as="p" center variant="lead">
           {props.text}
         </Text>
-        <ButtonList links={props.links} variant="center" reversed />
+        <ButtonList links={props.links} variant="center" reversed/>
         {props.image && (
           <Nudge left={5} right={5} bottom={5}>
             <GatsbyImage
