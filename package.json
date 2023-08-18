@@ -19,6 +19,7 @@
         "@contentful/rich-text-html-renderer": "^15.11.1",
         "@fontsource/dm-mono": "^4.5.9",
         "@fontsource/dm-sans": "^4.5.8",
+        "@netlify/functions": "^1.6.0",
         "@paypal/react-paypal-js": "^8.1.1",
         "@popperjs/core": "^2.11.8",
         "@vanilla-extract/babel-plugin": "^1.2.0",
