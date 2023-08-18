@@ -12,9 +12,13 @@ export default function Schedule(props) {
     const [campers, setCampers] = React.useState(0);
     const [totalPrice, setTotalPrice] = React.useState(0)
     const weeklyPrice = 50
+    const priceRef = React.useRef(totalPrice)
+    
+    React.useEffect(()=> {
+        priceRef.current = totalPrice
+    }, [totalPrice])
 
     const handleSelect = (event) => {
-        console.log(event.target.checked)
         const value = event.target.name + ':' + event.target.value;
         const isChecked = event.target.checked;
         var selected_list
@@ -24,7 +28,6 @@ export default function Schedule(props) {
         } else {
             //Remove unchecked item from checkList
             selected_list = checkedList.filter((item) => item !== value);
-
         }
         selected_list.sort((a, b) => new Date(a.split(':')[1]) - new Date(b.split(':')[1]))
         setCheckedList([...selected_list]);
@@ -36,10 +39,11 @@ export default function Schedule(props) {
         setTotalPrice(event.target.value * checkedList.length * weeklyPrice)
     }
 
+
     function createOrder(data, actions, err) {
         return actions.order.create({
             purchase_units: [
-                {amount: {value: totalPrice}}
+                { amount: { value: priceRef.current }}
             ],
             application_context: {
                 shipping_preference: 'NO_SHIPPING'
@@ -60,7 +64,7 @@ export default function Schedule(props) {
     }
 
     function onClick() {
-        console.log("When clicked, amount was", totalPrice);
+        console.log("When clicked, amount was", priceRef.current);
     }
 
 
