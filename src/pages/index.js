@@ -54,9 +54,11 @@ export default function Schedule(props) {
     function onApprove(data, actions) {
         return actions.order.capture().then(function (details) {
             console.log(details.payer)
-            axios.post("https://endearing-lollipop-9b6a00.netlify.app/.netlify/functions/email", {
+            axios.post("https://physiokids.netlify.app/.netlify/functions/email", {
                 "recipient": details.payer.email_address,
                 "name": details.payer.name.given_name
+            }).then((response) => {
+                console.log(response)
             })
             console.log(`Transaction completed by ${details.payer.name.given_name}!`)
         });
