@@ -22,6 +22,7 @@
         "@netlify/functions": "^1.6.0",
         "@paypal/react-paypal-js": "^8.1.1",
         "@popperjs/core": "^2.11.8",
+        "@sendgrid/mail": "^7.7.0",
         "@vanilla-extract/babel-plugin": "^1.2.0",
         "@vanilla-extract/css": "^1.9.0",
         "@vanilla-extract/css-utils": "^0.1.2",
