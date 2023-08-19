@@ -4,11 +4,11 @@ const {
 } = process.env;
 
 exports.handler = async function (event, context, callback) {
-    const { sender, recipient, name } = JSON.parse(event.body);
+    const { recipient, name } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
 
     const data = {
-        from: sender,
+        from: 'simplyeugene94@gmail.com',
         template_id: 'd-6ba6d50f1c564a8f8c6c17aba44039e7',
         personalizations: [{
             to: recipient,

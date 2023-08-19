@@ -3,7 +3,7 @@ import SEOHead from "../components/head"
 import { graphql } from "gatsby"
 import * as ui from "../components/ui"
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
-
+import axios from 'axios'
 
 
 export default function Schedule(props) {
@@ -52,9 +52,12 @@ export default function Schedule(props) {
     }
 
     function onApprove(data, actions) {
-        // TODO Redirect and send email
         return actions.order.capture().then(function (details) {
             console.log(details.payer)
+            axios.post("https://endearing-lollipop-9b6a00.netlify.app/.netlify/functions/email", {
+                "recipient": details.payer.email_address,
+                "name": details.payer.name.given_name
+            })
             console.log(`Transaction completed by ${details.payer.name.given_name}!`)
         });
     }
