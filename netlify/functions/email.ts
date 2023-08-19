@@ -19,7 +19,7 @@ exports.handler = async function (event, context, callback) {
     };
 
     try {
-        // await client.send(data);
+        await client.send(data);
         return {
             statusCode: 200,
             body: 'Message sent',
