@@ -4,14 +4,6 @@ const {
 } = process.env;
 
 exports.handler = async function (event, context, callback) {
-    console.log(event)
-    console.log(event.headers.host)
-    if (!process.env.NETLIFY_DEV && event.headers.host != 'endearing-lollipop-9b6a00.netlify.app') {
-        return {
-            statusCode: 400,
-            body: 'Unauthorized host'
-        }
-    }
     const { sender, recipient, name } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
 
