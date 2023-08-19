@@ -1,26 +1,32 @@
 const client = require('@sendgrid/mail');
 const {
     SENDGRID_API_KEY,
-    SENDGRID_FROM_EMAIL,
 } = process.env;
 
 exports.handler = async function (event, context, callback) {
-    const { senderEmail, senderName } = JSON.parse(event.body);
+    console.log(event.headers.host)
+    if (!process.env.NETLIFY_DEV && event.headers.host != 'https://endearing-lollipop-9b6a00.netlify.app') {
+        return {
+            statusCode: 400,
+            body: 'Unauthorized host'
+        }
+    }
+    const { sender, recipient, name } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
 
     const data = {
-        from: SENDGRID_FROM_EMAIL,
+        from: sender,
         template_id: 'd-6ba6d50f1c564a8f8c6c17aba44039e7',
         personalizations: [{
-            to: senderEmail,
+            to: recipient,
             dynamic_template_data: {
-                "firstName": senderName
+                "firstName": name
             }
         }]
     };
 
     try {
-        await client.send(data);
+        // await client.send(data);
         return {
             statusCode: 200,
             body: 'Message sent',
@@ -28,7 +34,7 @@ exports.handler = async function (event, context, callback) {
     } catch (err) {
         return {
             statusCode: err.code,
-            body: JSON.stringify({ msg: err.message }),
+            body: JSON.stringify({ msg: err }),
         };
     }
 };
