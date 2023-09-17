@@ -13,12 +13,8 @@ export default function Schedule(props) {
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef(totalPrice)
     const camperRef = React.useRef(campers)
-    const [dates] = React.useState({today: new Date()})
+    const [dates, setDates] = React.useState({today: new Date()})
     
-    React.useLayoutEffect(() => {
-        dates.today.setFullYear(2024,5, 2)
-    },[])
-
     React.useEffect(()=> {
         priceRef.current = totalPrice
     }, [totalPrice])
@@ -27,23 +23,23 @@ export default function Schedule(props) {
         camperRef.current = campers
     }, [campers])
 
+    React.useEffect(() => {
+
+    }, [dates])
+
     const calcWeeklyDiscount = (numWeeks) => {
         let price;
-        console.log(numWeeks)
         if (numWeeks <= 3) {
-            console.log("numWeeks less than 3")
             price = 435
         }
         else if (4 <= numWeeks && numWeeks <= 8) {
-            console.log("numWeeks between 4 and 8")
             price = 425
         }
         else if (numWeeks >= 9) {
-            console.log("numWeeks >= 9")
             price = 415
         }
         
-        let nyJan = new Date().setFullYear(2024, 0, 31)
+        let nyJan = new Date().setFullYear(2024, 0, 30)
         let nyJun = new Date().setFullYear(2024, 4, 31)
         if (dates.today < nyJan) {
             return price
@@ -60,18 +56,17 @@ export default function Schedule(props) {
         if (numWeeks === 0) {
             return 0
         }
-        let weeklyPrice = calcWeeklyDiscount(numWeeks)
-        console.log(weeklyPrice, campers, numWeeks)
+        let weeklyDiscount = calcWeeklyDiscount(numWeeks)
         switch(campers) {
             case 0:
             case '0':
                 return 0;
             case '1':
-                return weeklyPrice
+                return weeklyDiscount * numWeeks
             case '2':
-                return Math.ceil(weeklyPrice * .95)
+                return Math.ceil(weeklyDiscount * .95) * numWeeks
             default:
-                return Math.ceil(weeklyPrice * .90)
+                return Math.ceil(weeklyDiscount * .90) * numWeeks
 
         }
     }
@@ -133,7 +128,6 @@ export default function Schedule(props) {
         console.log("When clicked, amount was", priceRef.current);
     }
 
-
     return (
         <>
             <ui.Container width="fullbleed">
@@ -145,7 +139,12 @@ export default function Schedule(props) {
                     })}
                 </FlexList> */}
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
-                <p>Todays date {dates.today.toDateString()}</p>
+                <ui.Flex variant="center" responsive={true}>
+                    <button type="button" onClick={(e) => { dates.today = new Date() }}>Current Day</button>
+                    <button type="button" onClick={(e) => { dates.today.setFullYear(2024, 0, 31) }}>Jan31</button>
+                    <button type="button" onClick={(e) => {dates.today.setFullYear(2024, 4, 31)}}>May31</button>
+                    <p>Todays date {dates.today.toDateString()}</p>
+                </ui.Flex>
                 <ui.Flex variant="center" responsive={true}>
                     <h1># of campers: </h1>
                     <input type="number" defaultValue={0} onChange={handleChange} />
