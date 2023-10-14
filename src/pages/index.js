@@ -99,7 +99,10 @@ export default function Schedule(props) {
     function createOrder(data, actions, err) {
         return actions.order.create({
             purchase_units: [
-                { amount: { value: priceRef.current }}
+                { 
+                    amount: { value: priceRef.current },
+                    payee: { email_address: "sb-6wxdu26929620@business.example.com"}
+                }
             ],
             application_context: {
                 shipping_preference: 'NO_SHIPPING'
@@ -139,12 +142,12 @@ export default function Schedule(props) {
                     })}
                 </FlexList> */}
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
-                <ui.Flex variant="center" responsive={true}>
+                {/* <ui.Flex variant="center" responsive={true}>
                     <button type="button" onClick={(e) => { dates.today = new Date() }}>Current Day</button>
                     <button type="button" onClick={(e) => { dates.today.setFullYear(2024, 0, 31) }}>Jan31</button>
                     <button type="button" onClick={(e) => {dates.today.setFullYear(2024, 4, 31)}}>May31</button>
                     <p>Todays date {dates.today.toDateString()}</p>
-                </ui.Flex>
+                </ui.Flex> */}
                 <ui.Flex variant="center" responsive={true}>
                     <h1># of campers: </h1>
                     <input type="number" defaultValue={0} onChange={handleChange} />
