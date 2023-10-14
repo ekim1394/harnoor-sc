@@ -11,7 +11,8 @@ exports.handler = async function (event, context, callback) {
     switch (event.httpMethod) {
         case 'POST':
             const data = {
-                from: 'info@physiokids.com',
+                from: 'info@physio-kids.com',
+                replyTo: 'info@physiokids.com',
                 template_id: 'd-6ba6d50f1c564a8f8c6c17aba44039e7',
                 personalizations: [{
                     to: recipient,
