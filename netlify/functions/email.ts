@@ -7,7 +7,7 @@ exports.handler = async function (event, context, callback) {
     const { recipient, name } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
     console.log(event)
-
+    
     switch (event.httpMethod) {
         case 'POST':
             const data = {
@@ -33,15 +33,15 @@ exports.handler = async function (event, context, callback) {
                     body: JSON.stringify({ msg: err }),
                 };
             }
-        case 'OPTIONS':
-            const headers = {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Methods': 'POST'
-            };
-            return {
+            case 'OPTIONS':
+                const headers = {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'POST'
+                };
+                return {
                 statusCode: 200,
-                headers,
+                headers: headers,
                 body: 'This was not a POST request!'
             };
     }
