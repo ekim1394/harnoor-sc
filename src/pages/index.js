@@ -141,7 +141,7 @@ export default function Schedule(props) {
                         );
                     })}
                 </FlexList> */}
-                <p>Running in {process.env}</p>
+                <p>Running in {process.env.REACT_APP_PAYPAL_CLIENT_ID}</p>
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
                 {/* <ui.Flex variant="center" responsive={true}>
                     <button type="button" onClick={(e) => { dates.today = new Date() }}>Current Day</button>
