@@ -177,7 +177,8 @@ export default function Schedule(props) {
                     <ui.Flex variant='center'>
                         <PayPalScriptProvider options={
                             {
-                                clientId: "AfJI1B6OY9dOr4-tkGAnFdqEE96782Phgmw1I5XZ2ftHlBKNrBhse9ozglYUP303Fv3aOcS3AFXpH-YP",
+                                // TODO replace this with a call to functions to grab script
+                                clientId: "AVqKStG6bLSMfYeSgas_wA4peglTsSOq4r_E867tXdRyvmvwEURSHJP6uCjsf2uzSbi0VAu_SOeUyX_y",
                                 "enable-funding": "venmo",
                             }
                         }>
