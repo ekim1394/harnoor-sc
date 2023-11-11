@@ -101,8 +101,8 @@ export default function Schedule(props) {
         return actions.order.create({
             purchase_units: [
                 { 
-                    amount: { value: priceRef.current },
-                    payee: { email_address: "sb-6wxdu26929620@business.example.com"}
+                    amount: { value: 1 },
+                    payee: { email_address: "info@physiokids.com"}
                 }
             ],
             application_context: {
