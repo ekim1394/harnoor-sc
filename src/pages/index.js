@@ -118,6 +118,7 @@ export default function Schedule(props) {
                 "name": details.payer.name.given_name
             }).then((response) => {
                 console.log(response)
+                window.location.replace('https://physio-kids.com')
             })
             console.log(`Transaction completed by ${details.payer.name.given_name}!`)
         });
