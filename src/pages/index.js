@@ -141,7 +141,7 @@ export default function Schedule(props) {
                         );
                     })}
                 </FlexList> */}
-                <ui.Heading center={true}>Running in {process.env.NODE_ENV}</ui.Heading>
+                <p>Running in {process.env}</p>
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
                 {/* <ui.Flex variant="center" responsive={true}>
                     <button type="button" onClick={(e) => { dates.today = new Date() }}>Current Day</button>
