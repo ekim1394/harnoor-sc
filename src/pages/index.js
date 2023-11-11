@@ -119,7 +119,7 @@ export default function Schedule(props) {
                 "name": details.payer.name.given_name
             }).then((response) => {
                 console.log(response)
-                window.location.replace('https://physio-kids.com')
+                window.location.replace(process.env.GATSBY_CONFIRM_REDIRECT)
             })
             console.log(`Transaction completed by ${details.payer.name.given_name}!`)
         });
