@@ -141,7 +141,6 @@ export default function Schedule(props) {
                         );
                     })}
                 </FlexList> */}
-                <p>Running in {process.env.REACT_APP_PAYPAL_CLIENT_ID}</p>
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
                 {/* <ui.Flex variant="center" responsive={true}>
                     <button type="button" onClick={(e) => { dates.today = new Date() }}>Current Day</button>
@@ -180,8 +179,7 @@ export default function Schedule(props) {
                     <ui.Flex variant='center'>
                         <PayPalScriptProvider options={
                             {
-                                // TODO replace this with a call to functions to grab script
-                                clientId: "AVqKStG6bLSMfYeSgas_wA4peglTsSOq4r_E867tXdRyvmvwEURSHJP6uCjsf2uzSbi0VAu_SOeUyX_y",
+                                clientId: {process.env.REACT_APP_PAYPAL_CLIENT_ID},
                                 "enable-funding": "venmo",
                             }
                         }>
@@ -195,6 +193,7 @@ export default function Schedule(props) {
 
 
             </ui.Container>
+            <footer>Running in {process.env.NODE_ENV}</footer>
         </>
     )
 }
