@@ -14,6 +14,7 @@ export default function Schedule(props) {
     const priceRef = React.useRef(totalPrice)
     const camperRef = React.useRef(campers)
     const [dates, setDates] = React.useState({today: new Date()})
+    let apiHost = 
     
     React.useEffect(()=> {
         priceRef.current = totalPrice
@@ -113,7 +114,7 @@ export default function Schedule(props) {
     function onApprove(data, actions) {
         return actions.order.capture().then(function (details) {
             console.log(details.payer)
-            axios.post("https://physiokids.netlify.app/.netlify/functions/email", {
+            axios.post(`${window.location.href}/.netlify/functions/email`, {
                 "recipient": details.payer.email_address,
                 "name": details.payer.name.given_name
             }).then((response) => {
