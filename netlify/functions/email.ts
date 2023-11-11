@@ -17,7 +17,8 @@ exports.handler = async function (event, context, callback) {
                 personalizations: [{
                     to: recipient,
                     dynamic_template_data: {
-                        "firstName": name
+                        "firstName": name,
+                        "formLink": "https://form.jotform.com/232527821060045"
                     }
                 }]
             };
