@@ -12,7 +12,7 @@ exports.handler = async function (event, context, callback) {
         case 'POST':
             const data = {
                 from: 'info@physio-kids.com',
-                replyTo: 'info@physiokids.com',
+                replyTo: 'info@physio-kids.com',
                 template_id: 'd-6ba6d50f1c564a8f8c6c17aba44039e7',
                 personalizations: [{
                     to: recipient,
