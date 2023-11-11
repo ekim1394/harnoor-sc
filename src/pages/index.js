@@ -63,11 +63,11 @@ export default function Schedule(props) {
             case '0':
                 return 0;
             case '1':
-                return weeklyDiscount * numWeeks
+                return weeklyDiscount * numWeeks * parseInt(campers)
             case '2':
-                return Math.ceil(weeklyDiscount * .95) * numWeeks
+                return Math.ceil(weeklyDiscount * .95) * numWeeks * parseInt(campers)
             default:
-                return Math.ceil(weeklyDiscount * .90) * numWeeks
+                return Math.ceil(weeklyDiscount * .90) * numWeeks * parseInt(campers)
 
         }
     }
