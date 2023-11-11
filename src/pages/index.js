@@ -190,7 +190,7 @@ export default function Schedule(props) {
                     <ui.Flex variant='center'>
                         <PayPalScriptProvider options={
                             {
-                                clientId: "{process.env.GATSBY_PAYPAL_CLIENT_ID}",
+                                clientId: `${process.env.GATSBY_PAYPAL_CLIENT_ID}`,
                                 "enable-funding": "venmo",
                             }
                         }>
