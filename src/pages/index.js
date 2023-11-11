@@ -141,6 +141,7 @@ export default function Schedule(props) {
                         );
                     })}
                 </FlexList> */}
+                <ui.Heading center={true}>Running in {process.env.NODE_ENV}</ui.Heading>
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
                 {/* <ui.Flex variant="center" responsive={true}>
                     <button type="button" onClick={(e) => { dates.today = new Date() }}>Current Day</button>
@@ -172,6 +173,8 @@ export default function Schedule(props) {
                 </ui.Flex>
                 <ui.Subhead center={true}>Total Price: ${totalPrice}
                 </ui.Subhead>
+
+                
 
                 {checkedList.length > 0 && totalPrice > 0 &&
                     <ui.Flex variant='center'>
