@@ -136,10 +136,10 @@ export default function Schedule(props) {
         if (process.env.GATSBY_BRANCH === "main") {
             break branch;
         }
-        environment = `Running on ${process.env.GATSBY_BRANCH}` 
+        environment = `Running on ${process.env.GATSBY_BRANCH} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0,8)}` 
     } 
     else {
-        environment = `Running on ${process.env.NODE_ENV}` 
+        environment = `Running on ${process.env.NODE_ENV} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}` 
     }
 
     return (
