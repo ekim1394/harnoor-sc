@@ -131,6 +131,17 @@ export default function Schedule(props) {
         console.log("When clicked, amount was", priceRef.current);
     }
 
+    let environment = "";
+    branch: if (process.env.GATSBY_BRANCH) {
+        if (process.env.GATSBY_BRANCH === "main") {
+            break branch;
+        }
+        environment = `Running on ${process.env.GATSBY_BRANCH}` 
+    } 
+    else {
+        environment = `Running on ${process.env.NODE_ENV}` 
+    }
+
     return (
         <>
             <ui.Container width="fullbleed">
@@ -179,7 +190,7 @@ export default function Schedule(props) {
                     <ui.Flex variant='center'>
                         <PayPalScriptProvider options={
                             {
-                                clientId: {process.env.REACT_APP_PAYPAL_CLIENT_ID},
+                                clientId: "{process.env.GATSBY_PAYPAL_CLIENT_ID}",
                                 "enable-funding": "venmo",
                             }
                         }>
@@ -193,7 +204,11 @@ export default function Schedule(props) {
 
 
             </ui.Container>
-            <footer>Running in {process.env.NODE_ENV}</footer>
+            <footer>
+                <ui.Flex variant='center'>
+                    { environment }
+                </ui.Flex>
+            </footer>
         </>
     )
 }
