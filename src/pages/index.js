@@ -14,7 +14,6 @@ export default function Schedule(props) {
     const priceRef = React.useRef(totalPrice)
     const camperRef = React.useRef(campers)
     const [dates, setDates] = React.useState({today: new Date()})
-    let apiHost = 
     
     React.useEffect(()=> {
         priceRef.current = totalPrice

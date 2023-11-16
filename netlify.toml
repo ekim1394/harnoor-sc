@@ -1,0 +1,2 @@
+[functions."email"]
+    included_files = ["forms/**.pdf"]
