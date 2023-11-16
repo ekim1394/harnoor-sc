@@ -17,7 +17,6 @@ exports.handler = async function (event, context, callback) {
     function forms2attachments () {
         var attachments : object[] = []
         glob.sync('./forms/**.pdf').forEach(file => {
-            console.log(file)
             attachments.push(
                 { 
                     content: fs.readFileSync(file).toString("base64"), 
@@ -27,7 +26,8 @@ exports.handler = async function (event, context, callback) {
                 }
             )
         });
-        return JSON.stringify(attachments)
+        console.log(attachments);
+        return attachments;
     }    
     
     const data = {
@@ -43,10 +43,10 @@ exports.handler = async function (event, context, callback) {
             bcc: 'info@physio-kids.com'
         }],
         attachments: [
-            JSON.parse(forms2attachments())
+            forms2attachments()
         ]
     };
-    console.log(data)
+    console.log(JSON.stringify(data))
     try {
         await client.send(data);
         return {
