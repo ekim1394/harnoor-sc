@@ -16,7 +16,7 @@ exports.handler = async function (event, context, callback) {
 
     function forms2attachments () {
         var attachments : object[] = []
-        glob.sync('./forms/**.pdf').array.forEach(file => {
+        glob.sync('./forms/**.pdf').forEach(file => {
             attachments.push(
                 { 
                     content: fs.readFileSync(require(path.resolve(file))).toString("base64"), 
