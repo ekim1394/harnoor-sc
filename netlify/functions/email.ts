@@ -20,6 +20,7 @@ exports.handler = async function (event, context, callback) {
 
     function forms2attachments () {
         var attachments : object[] = []
+        console.log(filenames)
         filenames.forEach(file => {
             attachments.push(
                 { content: fs.readFileSync(file).toString("base64"), filename: file, type: 'application/pdf', disposition: 'attachment' }
