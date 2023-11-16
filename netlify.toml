@@ -1,2 +1,2 @@
-[functions."eamil"]
+[functions]
     included_files = ["forms/**.pdf"]
