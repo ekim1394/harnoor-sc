@@ -162,7 +162,7 @@ export default function Schedule(props) {
                 </ui.Flex> */}
                 <ui.Flex variant="center" responsive={true}>
                     <h1># of campers: </h1>
-                    <input type="number" defaultValue={0} onChange={handleChange} />
+                    <input type="number" defaultValue={0} min="1" onChange={handleChange} />
                 </ui.Flex>
                 <ui.Flex variant="column">
                     {
