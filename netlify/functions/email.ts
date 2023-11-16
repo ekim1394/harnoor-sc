@@ -42,11 +42,8 @@ exports.handler = async function (event, context, callback) {
             },
             bcc: 'info@physio-kids.com'
         }],
-        attachments: [
-            forms2attachments()
-        ]
+        attachments: forms2attachments()
     };
-    console.log(JSON.stringify(data))
     try {
         await client.send(data);
         return {
