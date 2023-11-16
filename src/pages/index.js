@@ -119,7 +119,7 @@ export default function Schedule(props) {
             }).then((response) => {
                 console.log(response)
                 window.location.replace(process.env.GATSBY_CONFIRM_REDIRECT)
-            })
+            }).catch((err) => console.log(err))
             console.log(`Transaction completed by ${details.payer.name.given_name}!`)
         });
     }
@@ -193,6 +193,7 @@ export default function Schedule(props) {
                             {
                                 clientId: `${process.env.GATSBY_PAYPAL_CLIENT_ID}`,
                                 "enable-funding": "venmo",
+                                "merchantId": "info@physiokids.com"
                             }
                         }>
                             <PayPalButtons style={{ color: "blue", shape: "pill", disableMaxWidth: false }} className="paypalButton"
