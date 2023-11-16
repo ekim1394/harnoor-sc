@@ -27,7 +27,6 @@ exports.handler = async function (event, context, callback) {
                 }
             )
         });
-        console.log(attachments)
         return attachments
     }    
     
@@ -47,6 +46,7 @@ exports.handler = async function (event, context, callback) {
             forms2attachments()
         ]
     };
+    console.log(data)
     try {
         await client.send(data);
         return {
@@ -54,6 +54,7 @@ exports.handler = async function (event, context, callback) {
             body: 'Message sent',
         };
     } catch (err) {
+        console.log(err)
         return {
             statusCode: err.code,
             body: JSON.stringify({ msg: err }),
