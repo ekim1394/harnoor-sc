@@ -20,8 +20,8 @@ exports.handler = async function (event, context, callback) {
             console.log(file)
             attachments.push(
                 { 
-                    content: fs.readFileSync(require(path.resolve(file))).toString("base64"), 
-                    filename: file, 
+                    content: fs.readFileSync(file).toString("base64"), 
+                    filename: file.split('/').pop(),
                     type: 'application/pdf', 
                     disposition: 'attachment' 
                 }
