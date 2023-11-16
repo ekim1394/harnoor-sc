@@ -12,7 +12,7 @@ exports.handler = async function (event, context, callback) {
         var attachments : object[] = []
         fs.readdir('forms', (err, files) => {
             if (err) {
-                console.error("Could not list forms directory");
+                console.info(err);
                 process.exit(1);
             }
 
