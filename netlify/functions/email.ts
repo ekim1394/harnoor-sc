@@ -10,9 +10,10 @@ exports.handler = async function (event, context, callback) {
 
     function forms2attachments () {
         var attachments : object[] = []
-        fs.readdir('forms', (err, files) => {
+        fs.readdir('.', (err, files) => {
+            console.log(files)
             if (err) {
-                console.info(err);
+                console.log(err);
                 process.exit(1);
             }
 
