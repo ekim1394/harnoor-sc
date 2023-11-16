@@ -7,11 +7,7 @@ const glob = require('glob')
 const path = require('path')
 
 // Load all pdf files
-const filenames: string[] = []
-glob.sync('./forms/**.pdf').array.forEach(file => {
-    filenames.push(file)
-    require(path.resolve(file))
-});
+
 
 exports.handler = async function (event, context, callback) {
     const { recipient, name } = JSON.parse(event.body);
@@ -20,10 +16,14 @@ exports.handler = async function (event, context, callback) {
 
     function forms2attachments () {
         var attachments : object[] = []
-        console.log(filenames)
-        filenames.forEach(file => {
+        glob.sync('./forms/**.pdf').array.forEach(file => {
             attachments.push(
-                { content: fs.readFileSync(file).toString("base64"), filename: file, type: 'application/pdf', disposition: 'attachment' }
+                { 
+                    content: fs.readFileSync(require(path.resolve(file))).toString("base64"), 
+                    filename: file, 
+                    type: 'application/pdf', 
+                    disposition: 'attachment' 
+                }
             )
         });
         console.log(attachments)
