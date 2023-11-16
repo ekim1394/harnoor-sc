@@ -27,7 +27,7 @@ exports.handler = async function (event, context, callback) {
                 }
             )
         });
-        return attachments
+        return JSON.stringify(attachments)
     }    
     
     const data = {
@@ -43,7 +43,7 @@ exports.handler = async function (event, context, callback) {
             bcc: 'info@physio-kids.com'
         }],
         attachments: [
-            forms2attachments()
+            JSON.parse(forms2attachments())
         ]
     };
     console.log(data)
