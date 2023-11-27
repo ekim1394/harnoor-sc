@@ -168,10 +168,7 @@ export default function Schedule(props) {
                     {
                         contentfulSchedule.summerCampSessions.map(
                             (dates) => {
-                                var startDateStr = new Date(dates.startDate).toString().substring(4, 10)
-                                var endDateStr = new Date(dates.endDate).toString().substring(4, 10)
-                                return (<ui.Container width='wide'>
-                                    <ui.Subhead center={true}>{startDateStr} - {endDateStr}</ui.Subhead>
+                                return (<ui.Container>
                                     <ui.WeeklyList name={dates.name} startDate={dates.startDate} endDate={dates.endDate} handleSelect={handleSelect} />
                                     <br style={{ clear: 'both' }} />
                                     <br style={{ clear: 'both' }} />
@@ -223,12 +220,12 @@ export const Head = (props) => {
 export const query = graphql`
 {
     contentfulSchedule {
-    name
-    summerCampSessions {
-      name
-      startDate
-      endDate
-    }
+        name
+        summerCampSessions {
+            name
+            startDate
+            endDate
+        }
   }
 }
 `

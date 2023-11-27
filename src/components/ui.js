@@ -257,13 +257,11 @@ export function WeeklyList(props) {
     var day = 1
     // Copy start date
     var current = new Date(start);
-    // Shift to next of required days
-    current.setDate(current.getDate() + (day - current.getDay() + 7) % 7);
     // While less than end date, add dates to result array
-    while (current < end) {
+    while (current <= end) {
         var temp = new Date(current)
         current.setDate(current.getDate() + 7);
-        result.push([temp, new Date(current)]);
+        result.push([temp, new Date(current - 1)]);
     }
     result.pop()
     return <FlexList variant='spaceBetween'>
