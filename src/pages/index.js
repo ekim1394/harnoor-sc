@@ -220,6 +220,7 @@ export const Head = (props) => {
 export const query = graphql`
 {
     contentfulSchedule {
+        name
         summerCampSessions {
             name
             startDate
