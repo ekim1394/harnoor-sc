@@ -184,7 +184,7 @@ export default function Schedule(props) {
                 </ui.Flex> */}
                 <ui.Flex variant="center" responsive={true}>
                     <h1># of campers: </h1>
-                    <input type="number" defaultValue={0} min="1" onChange={handleChange} />
+                    <input type="number" defaultValue={0} min="0" onChange={handleChange} />
                 </ui.Flex>
                 <ui.Box center={true} background="primary">
                     <br />
@@ -192,13 +192,15 @@ export default function Schedule(props) {
                             Premium Founders Membership
                     </ui.Heading>
                     <ui.Container width="narrow">
-                        <ui.Subhead>
-                            Includes pre and post camp care, access to all weeks, and a private one hour consultation with Dr. Harnoor Singh
-                            <br />
-                            <br />
+                    <ui.Subhead>
                             $5500 per camper
-                        </ui.Subhead>
+                    </ui.Subhead>
                     <ui.PillBox value="Select Membership" handleSelect={handleMembershipSelect}/>
+                    <ui.Text>
+                        Includes pre and post camp care, access to all weeks, and a private one hour consultation with Dr. Harnoor Singh
+                        <br />
+                        <br />
+                    </ui.Text>
 
                     </ui.Container>
                     <br />
@@ -225,7 +227,7 @@ export default function Schedule(props) {
 
                 
 
-                {(checkedList.length > 0 || totalPrice > 0) &&
+                {((checkedList.length > 0 && totalPrice > 0) || (membershipSelected)) &&
                     <PaypalButton createOrder={createOrder} onApprove={onApprove} onClick={onClick} onError={onError}/>}
 
 
