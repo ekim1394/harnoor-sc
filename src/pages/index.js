@@ -13,7 +13,7 @@ export default function Schedule(props) {
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef(totalPrice)
     const camperRef = React.useRef(campers)
-    const [dates, setDates] = React.useState({today: new Date()})
+    const [dates] = React.useState({today: new Date()})
     const [membershipSelected, setMembershipSelected] = React.useState(false);
     const membershipPrice = 5500
     
@@ -155,11 +155,10 @@ export default function Schedule(props) {
     }
 
     let environment = "";
-    branch: if (process.env.GATSBY_BRANCH) {
-        if (process.env.GATSBY_BRANCH === "main") {
-            break branch;
+    if (process.env.GATSBY_BRANCH) {
+        if (process.env.GATSBY_BRANCH !== "main") {
+            environment = `Running on ${process.env.GATSBY_BRANCH} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0,8)}` 
         }
-        environment = `Running on ${process.env.GATSBY_BRANCH} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0,8)}` 
     } 
     else {
         environment = `Running on ${process.env.NODE_ENV} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}` 
@@ -184,7 +183,7 @@ export default function Schedule(props) {
                 </ui.Flex> */}
                 <ui.Flex variant="center" responsive={true}>
                     <h1># of campers: </h1>
-                    <input type="number" defaultValue={0} min="0" onChange={handleChange} />
+                    <input id="camperInput" type="number" defaultValue={0} min="0" onChange={handleChange} />
                 </ui.Flex>
                 <br />
                 <ui.Box center={true} background="primary">
@@ -196,7 +195,7 @@ export default function Schedule(props) {
                     <ui.Subhead>
                             $5500 per camper
                     </ui.Subhead>
-                    <ui.PillBox value="Select Membership" handleSelect={handleMembershipSelect}/>
+                    <ui.PillBox id="membership" value="Select Membership" handleSelect={handleMembershipSelect}/>
                     <ui.Text>
                         Includes pre and post camp care, access to all weeks, and a private one hour consultation with Dr. Harnoor Singh
                     </ui.Text>
@@ -210,7 +209,7 @@ export default function Schedule(props) {
                     {
                         contentfulSchedule.summerCampSessions.map(
                             (dates) => {
-                                return (<ui.Container>
+                                return (<ui.Container key={dates.name}>
                                     <ui.WeeklyList name={dates.name} startDate={dates.startDate} endDate={dates.endDate} handleSelect={handleSelect} />
                                     <br style={{ clear: 'both' }} />
                                     <br style={{ clear: 'both' }} />

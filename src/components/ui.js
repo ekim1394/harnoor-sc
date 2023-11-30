@@ -250,10 +250,10 @@ export function BlockLink(props) {
     return <Link className={styles.blockLink} {...props} />
 }
 
-export function PillBox(props, background) {
+export function PillBox(props) {
     return ( 
         <Base as='label' className={'PillList-item'}>
-            <Base as="input" type="checkbox" name={props.name} value={props.value} onChange={props.handleSelect}/>
+            <input type="checkbox" id={props.id} name={props.name} value={props.value} onChange={props.handleSelect}/>
             <Base as="span" cx={[
                 styles.backgrounds['primary'],
                 styles.text["subhead"],
@@ -268,7 +268,6 @@ export function WeeklyList(props) {
     var start = props.startDate
     var end = new Date(props.endDate)
     var result = [];
-    var day = 1
     // Copy start date
     var current = new Date(start);
     // While less than end date, add dates to result array
@@ -283,9 +282,9 @@ export function WeeklyList(props) {
             var startDate = date[0].toString().substring(4, 10)
             var endDate = date[1].toString().substring(4, 10)
             return (
-                <Base as='li' key={startDate}>
+                <Base as='li' key={date}>
                     <Base as='label' className={'PillList-item'}>
-                        <input type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
+                        <input id={date} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
                         <span className="PillList-label">
                             {startDate} - {endDate}
                         </span>
