@@ -186,6 +186,7 @@ export default function Schedule(props) {
                     <h1># of campers: </h1>
                     <input type="number" defaultValue={0} min="0" onChange={handleChange} />
                 </ui.Flex>
+                <br />
                 <ui.Box center={true} background="primary">
                     <br />
                     <ui.Heading>
@@ -198,10 +199,7 @@ export default function Schedule(props) {
                     <ui.PillBox value="Select Membership" handleSelect={handleMembershipSelect}/>
                     <ui.Text>
                         Includes pre and post camp care, access to all weeks, and a private one hour consultation with Dr. Harnoor Singh
-                        <br />
-                        <br />
                     </ui.Text>
-
                     </ui.Container>
                     <br />
                 </ui.Box>
