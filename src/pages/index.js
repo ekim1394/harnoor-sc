@@ -15,7 +15,7 @@ export default function Schedule(props) {
     const camperRef = React.useRef(campers)
     const [dates] = React.useState({today: new Date()})
     const [membershipSelected, setMembershipSelected] = React.useState(false);
-    const membershipPrice = 5500
+    const membershipPrice = 6000
     
     React.useEffect(()=> {
         priceRef.current = totalPrice
@@ -193,7 +193,7 @@ export default function Schedule(props) {
                     </ui.Heading>
                     <ui.Container width="narrow">
                     <ui.Subhead>
-                            $5500 per camper
+                            ${membershipPrice} per camper
                     </ui.Subhead>
                     <ui.PillBox id="membership" value="Select Membership" handleSelect={handleMembershipSelect}/>
                     <ui.Text>
@@ -225,7 +225,7 @@ export default function Schedule(props) {
 
                 
 
-                {((checkedList.length > 0 && totalPrice > 0) || (membershipSelected)) &&
+                {(checkedList.length > 0 || membershipSelected) && totalPrice > 0 &&
                     <PaypalButton createOrder={createOrder} onApprove={onApprove} onClick={onClick} onError={onError}/>}
 
 
