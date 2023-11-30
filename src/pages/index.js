@@ -206,6 +206,7 @@ export default function Schedule(props) {
                 <br />
                 {!membershipSelected &&
                 <ui.Flex variant="column">
+                    <ui.Subhead>A La Carte: Choose Your Own Weeks</ui.Subhead>
                     {
                         contentfulSchedule.summerCampSessions.map(
                             (dates) => {
