@@ -250,6 +250,20 @@ export function BlockLink(props) {
     return <Link className={styles.blockLink} {...props} />
 }
 
+export function PillBox(props, background) {
+    return ( 
+        <Base as='label' className={'PillList-item'}>
+            <Base as="input" type="checkbox" name={props.name} value={props.value} onChange={props.handleSelect}/>
+            <Base as="span" cx={[
+                styles.backgrounds['primary'],
+                styles.text["subhead"],
+                styles.buttons["reversed"]
+                ]} className="PillList-label">
+                {props.value}
+            </Base>
+        </Base>
+    )
+}
 export function WeeklyList(props) {
     var start = props.startDate
     var end = new Date(props.endDate)

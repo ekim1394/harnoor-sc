@@ -8,14 +8,13 @@
 
 .PillList-item input[type="checkbox"]:checked+.PillList-label {
     background-color: #1da1f2;
-    border: 1px solid #1da1f2;
+    border: 2px solid #1da1f2;
     color: #fff;
 }
 
 .PillList-label {
-    border: 1px solid #1da1f2;
+    border: 2px solid #1da1f2;
     border-radius: 20px;
-    color: #1c94e0;
     display: block;
     padding-left: 15px;
     padding-right: 15px;

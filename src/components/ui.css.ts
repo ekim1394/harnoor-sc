@@ -471,13 +471,15 @@ const button = style({
   display: "inline-flex",
   textDecoration: "none",
   fontWeight: theme.fontWeights.bold,
-  fontSize: theme.fontSizes[2],
+  fontSize: theme.fontSizes[4],
   lineHeight: theme.lineHeights.solid,
   paddingTop: theme.space[3],
   paddingBottom: theme.space[3],
   paddingLeft: theme.space[3],
   paddingRight: theme.space[3],
   borderRadius: theme.radii.button,
+  borderColor: "black",
+  border: "2px solid"
 })
 
 export type ButtonVariants = "primary" | "reversed" | "link" | "linkReversed"

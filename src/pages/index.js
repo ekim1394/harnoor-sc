@@ -2,7 +2,7 @@ import * as React from "react"
 import SEOHead from "../components/head"
 import { graphql } from "gatsby"
 import * as ui from "../components/ui"
-import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
+import { PaypalButton } from "../components/PaypalButton"
 import axios from 'axios'
 
 
@@ -14,6 +14,8 @@ export default function Schedule(props) {
     const priceRef = React.useRef(totalPrice)
     const camperRef = React.useRef(campers)
     const [dates, setDates] = React.useState({today: new Date()})
+    const [membershipSelected, setMembershipSelected] = React.useState(false);
+    const membershipPrice = 5500
     
     React.useEffect(()=> {
         priceRef.current = totalPrice
@@ -90,9 +92,15 @@ export default function Schedule(props) {
     };
 
     const handleChange = (event) => {
-        setCampers(event.target.value)
-        var totalPrice = calcTotalPrice(event.target.value, checkedList.length)
-        setTotalPrice(totalPrice)
+        if (membershipSelected) {
+            setCampers(event.target.value)
+            setTotalPrice(membershipPrice * event.target.value)
+        }
+        else {
+            setCampers(event.target.value)
+            var totalPrice = calcTotalPrice(event.target.value, checkedList.length)
+            setTotalPrice(totalPrice)
+        }
     }
 
 
@@ -132,6 +140,20 @@ export default function Schedule(props) {
         console.log("When clicked, amount was", priceRef.current);
     }
 
+    function handleMembershipSelect() {
+        // Disable other buttons 
+        let toggle = !membershipSelected
+        setMembershipSelected(toggle)
+        // Set New Price
+        if (toggle) {
+            let totalPrice = membershipPrice * camperRef.current
+            setTotalPrice(totalPrice)
+        } else {
+            setTotalPrice(0)
+            setCheckedList([])
+        }
+    }
+
     let environment = "";
     branch: if (process.env.GATSBY_BRANCH) {
         if (process.env.GATSBY_BRANCH === "main") {
@@ -164,6 +186,25 @@ export default function Schedule(props) {
                     <h1># of campers: </h1>
                     <input type="number" defaultValue={0} min="1" onChange={handleChange} />
                 </ui.Flex>
+                <ui.Box center={true} background="primary">
+                    <br />
+                    <ui.Heading>
+                            Premium Founders Membership
+                    </ui.Heading>
+                    <ui.Container width="narrow">
+                        <ui.Subhead>
+                            Includes pre and post camp care, access to all weeks, and a private one hour consultation with Dr. Harnoor Singh
+                            <br />
+                            <br />
+                            $5500 per camper
+                        </ui.Subhead>
+                    <ui.PillBox value="Select Membership" handleSelect={handleMembershipSelect}/>
+
+                    </ui.Container>
+                    <br />
+                </ui.Box>
+                <br />
+                {!membershipSelected &&
                 <ui.Flex variant="column">
                     {
                         contentfulSchedule.summerCampSessions.map(
@@ -178,28 +219,14 @@ export default function Schedule(props) {
                             }
                         )
                     }
-                </ui.Flex>
+                </ui.Flex>}
                 <ui.Subhead center={true}>Total Price: ${totalPrice}
                 </ui.Subhead>
 
                 
 
-                {checkedList.length > 0 && totalPrice > 0 &&
-                    <ui.Flex variant='center'>
-                        <PayPalScriptProvider options={
-                            {
-                                clientId: `${process.env.GATSBY_PAYPAL_CLIENT_ID}`,
-                                "enable-funding": "venmo",
-                                "merchantId": "info@physiokids.com"
-                            }
-                        }>
-                            <PayPalButtons style={{ color: "blue", shape: "pill", disableMaxWidth: false }} className="paypalButton"
-                            createOrder={createOrder}
-                            onApprove={onApprove}
-                            onError={onError}
-                            onClick={onClick}/>
-                        </PayPalScriptProvider>
-                    </ui.Flex>}
+                {(checkedList.length > 0 || totalPrice > 0) &&
+                    <PaypalButton createOrder={createOrder} onApprove={onApprove} onClick={onClick} onError={onError}/>}
 
 
             </ui.Container>
