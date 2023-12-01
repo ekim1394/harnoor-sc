@@ -279,29 +279,26 @@ export function WeeklyList(props) {
     result.pop()
     return (
         <FlexList variant='spaceBetween'>
-            {result.map(
-                (date) => {
-                    var startDate = date[0].toString().substring(4, 10)
-                    var endDate = date[1].toString().substring(4, 10)
-                    return (
-                        <Base as='li' key={date}>
-                            <Base as='label' className={'PillList-item'}>
-                                <input id={date} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
-                                <span className="PillList-label">
-                                    {startDate} - {endDate}
-                                </span>
-                            </Base>
-                            <br/>
-                            <input type="checkbox" name="precare" onChange={props.handlePrePostCare}/>
-                            <span>Pre-care 8-9am $50</span>
-                            <br/>
-                            <input type="checkbox" name="postcare" onChange={props.handlePrePostCare}/>
-                            <span>Post-care 3-5:30pm $100</span>
+            {result.map((date) => {
+                var startDate = date[0].toString().substring(4, 10)
+                var endDate = date[1].toString().substring(4, 10)
+                return (
+                    <Base as='li' key={startDate.replace(/ /g, '')}>
+                        <Base as='label' className={'PillList-item'}>
+                            <input id={startDate} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
+                            <span className="PillList-label">
+                                {startDate} - {endDate}
+                            </span>
                         </Base>
-                    )
-                }
-            )
-            }
+                        <br />
+                        <input type="checkbox" id={startDate + "-precare"} name="precare" onChange={props.handlePrePostCare} />
+                        <span>Pre-care 8-9am $50</span>
+                        <br />
+                        <input type="checkbox" id={startDate + "-postcare"} name="postcare" onChange={props.handlePrePostCare} />
+                        <span>Post-care 3-5:30pm $100</span>
+                    </Base>
+                )
+            })}
         </FlexList>
     )
 }

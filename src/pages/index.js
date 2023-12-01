@@ -13,11 +13,11 @@ export default function Schedule(props) {
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef(totalPrice)
     const camperRef = React.useRef(campers)
-    const [dates] = React.useState({today: new Date()})
+    const [dates] = React.useState({ today: new Date() })
     const [membershipSelected, setMembershipSelected] = React.useState(false);
     const membershipPrice = 6000
-    
-    React.useEffect(()=> {
+
+    React.useEffect(() => {
         priceRef.current = totalPrice
     }, [totalPrice])
 
@@ -40,15 +40,15 @@ export default function Schedule(props) {
         else if (numWeeks >= 9) {
             price = 415
         }
-        
+
         let nyJan = new Date().setFullYear(2024, 0, 30)
         let nyJun = new Date().setFullYear(2024, 4, 31)
         if (dates.today < nyJan) {
             return price
-        } 
+        }
         if (nyJan <= dates.today && dates.today < nyJun) {
             return price + 25
-        } 
+        }
         if (dates.today >= nyJun) {
             return 495
         }
@@ -59,7 +59,7 @@ export default function Schedule(props) {
             return 0
         }
         let weeklyDiscount = calcWeeklyDiscount(numWeeks)
-        switch(campers) {
+        switch (campers) {
             case 0:
             case '0':
                 return 0;
@@ -83,6 +83,9 @@ export default function Schedule(props) {
         } else {
             //Remove unchecked item from checkList
             selected_list = checkedList.filter((item) => item !== value);
+            // Remove any pre/post care options
+            document.getElementById(event.target.id + '-precare').checked = false
+            document.getElementById(event.target.id + '-postcare').checked = false
         }
         selected_list.sort((a, b) => new Date(a.split(':')[1]) - new Date(b.split(':')[1]))
         setCheckedList([...selected_list]);
@@ -107,9 +110,9 @@ export default function Schedule(props) {
     function createOrder(data, actions, err) {
         return actions.order.create({
             purchase_units: [
-                { 
+                {
                     amount: { value: priceRef.current },
-                    payee: { email_address: "info@physiokids.com"}
+                    payee: { email_address: "info@physiokids.com" }
                 }
             ],
             application_context: {
@@ -154,14 +157,33 @@ export default function Schedule(props) {
         }
     }
 
+    function handlePrePostCare(ev) {
+        let startDate = ev.target.id.split('-')[0]
+        let careType = ev.target.id.split('-')[1]
+        let price = (careType === "precare") ? 50 : 100
+        let dateSelect = document.getElementById(startDate)
+        if (!dateSelect.checked) {
+            // Block selection if week is not set
+            document.getElementById(ev.target.id).checked = false
+            return
+        }
+        if (campers > 0) {
+            if (ev.target.checked) {
+                setTotalPrice(totalPrice + price)
+            } else {
+                setTotalPrice(totalPrice - price)
+            }
+        }
+    }
+
     let environment = "";
     if (process.env.GATSBY_BRANCH) {
         if (process.env.GATSBY_BRANCH !== "main") {
-            environment = `Running on ${process.env.GATSBY_BRANCH} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0,8)}` 
+            environment = `Running on ${process.env.GATSBY_BRANCH} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}`
         }
-    } 
+    }
     else {
-        environment = `Running on ${process.env.NODE_ENV} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}` 
+        environment = `Running on ${process.env.NODE_ENV} with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}`
     }
 
     return (
@@ -189,50 +211,45 @@ export default function Schedule(props) {
                 <ui.Box center={true} background="primary">
                     <br />
                     <ui.Heading>
-                            Premium Founders Membership
+                        Premium Founders Membership
                     </ui.Heading>
                     <ui.Container width="narrow">
-                    <ui.Subhead>
+                        <ui.Subhead>
                             ${membershipPrice} per camper
-                    </ui.Subhead>
-                    <ui.PillBox id="membership" value="Select Membership" handleSelect={handleMembershipSelect}/>
-                    <ui.Text>
-                        Includes pre and post camp care, access to all weeks, and a private one hour consultation with Dr. Harnoor Singh
-                    </ui.Text>
+                        </ui.Subhead>
+                        <ui.PillBox id="membership" value="Select Membership" handleSelect={handleMembershipSelect} />
+                        <ui.Text>
+                            Includes pre and post camp care, access to all weeks, and a private one hour consultation with Dr. Harnoor Singh
+                        </ui.Text>
                     </ui.Container>
                     <br />
                 </ui.Box>
                 <br />
                 {!membershipSelected &&
-                <ui.Flex variant="column">
-                    <ui.Subhead>A La Carte: Choose Your Own Weeks</ui.Subhead>
-                    {
-                        contentfulSchedule.summerCampSessions.map(
-                            (dates) => {
-                                return (<ui.Container key={dates.name}>
-                                    <ui.WeeklyList name={dates.name} startDate={dates.startDate} endDate={dates.endDate} handleSelect={handleSelect} />
-                                    <br style={{ clear: 'both' }} />
-                                    <br style={{ clear: 'both' }} />
+                    <ui.Flex variant="column">
+                        <ui.Subhead>A La Carte: Choose Your Own Weeks</ui.Subhead>
+                        {
+                            contentfulSchedule.summerCampSessions.map(
+                                (dates) => {
+                                    return (<ui.Container key={dates.name}>
+                                        <ui.WeeklyList name={dates.name} startDate={dates.startDate} endDate={dates.endDate} handleSelect={handleSelect} handlePrePostCare={handlePrePostCare} />
+                                        <br style={{ clear: 'both' }} />
+                                        <br style={{ clear: 'both' }} />
 
-                                </ui.Container>
-                                )
-                            }
-                        )
-                    }
-                </ui.Flex>}
+                                    </ui.Container>
+                                    )
+                                }
+                            )
+                        }
+                    </ui.Flex>}
                 <ui.Subhead center={true}>Total Price: ${totalPrice}
                 </ui.Subhead>
-
-                
-
                 {(checkedList.length > 0 || membershipSelected) && totalPrice > 0 &&
-                    <PaypalButton createOrder={createOrder} onApprove={onApprove} onClick={onClick} onError={onError}/>}
-
-
+                    <PaypalButton createOrder={createOrder} onApprove={onApprove} onClick={onClick} onError={onError} />}
             </ui.Container>
             <footer>
                 <ui.Flex variant='center'>
-                    { environment }
+                    {environment}
                 </ui.Flex>
             </footer>
         </>
