@@ -251,14 +251,14 @@ export function BlockLink(props) {
 }
 
 export function PillBox(props) {
-    return ( 
+    return (
         <Base as='label' className={'PillList-item'}>
-            <input type="checkbox" id={props.id} name={props.name} value={props.value} onChange={props.handleSelect}/>
+            <input type="checkbox" id={props.id} name={props.name} value={props.value} onChange={props.handleSelect} />
             <Base as="span" cx={[
                 styles.backgrounds['primary'],
                 styles.text["subhead"],
                 styles.buttons["reversed"]
-                ]} className="PillList-label">
+            ]} className="PillList-label">
                 {props.value}
             </Base>
         </Base>
@@ -277,22 +277,31 @@ export function WeeklyList(props) {
         result.push([temp, new Date(current - 1)]);
     }
     result.pop()
-    return <FlexList variant='spaceBetween'>
-        {result.map((date) => {
-            var startDate = date[0].toString().substring(4, 10)
-            var endDate = date[1].toString().substring(4, 10)
-            return (
-                <Base as='li' key={date}>
-                    <Base as='label' className={'PillList-item'}>
-                        <input id={date} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
-                        <span className="PillList-label">
-                            {startDate} - {endDate}
-                        </span>
-                    </Base>
-                </Base>
+    return (
+        <FlexList variant='spaceBetween'>
+            {result.map(
+                (date) => {
+                    var startDate = date[0].toString().substring(4, 10)
+                    var endDate = date[1].toString().substring(4, 10)
+                    return (
+                        <Base as='li' key={date}>
+                            <Base as='label' className={'PillList-item'}>
+                                <input id={date} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
+                                <span className="PillList-label">
+                                    {startDate} - {endDate}
+                                </span>
+                            </Base>
+                            <br/>
+                            <input type="checkbox" name="precare" onChange={props.handlePrePostCare}/>
+                            <span>Pre-care 8-9am $50</span>
+                            <br/>
+                            <input type="checkbox" name="postcare" onChange={props.handlePrePostCare}/>
+                            <span>Post-care 3-5:30pm $100</span>
+                        </Base>
+                    )
+                }
             )
-        }
-        )
-        }
-    </FlexList>
+            }
+        </FlexList>
+    )
 }
