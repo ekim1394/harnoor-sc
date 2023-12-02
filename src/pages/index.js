@@ -9,7 +9,7 @@ import axios from 'axios'
 export default function Schedule(props) {
     const { contentfulSchedule } = props.data
     const [checkedList, setCheckedList] = React.useState([]);
-    const [campers, setCampers] = React.useState(0);
+    const [campers, setCampers] = React.useState(1);
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef(totalPrice)
     const camperRef = React.useRef(campers)
@@ -59,10 +59,12 @@ export default function Schedule(props) {
             return 0
         }
         let weeklyDiscount = calcWeeklyDiscount(numWeeks)
+        console.log(campers, weeklyDiscount, numWeeks)
         switch (campers) {
             case 0:
             case '0':
                 return 0;
+            case 1:
             case '1':
                 return weeklyDiscount * numWeeks * parseInt(campers)
             case '2':
@@ -205,7 +207,7 @@ export default function Schedule(props) {
                 </ui.Flex> */}
                 <ui.Flex variant="center" responsive={true}>
                     <h1># of campers: </h1>
-                    <input id="camperInput" type="number" defaultValue={0} min="0" onChange={handleChange} />
+                    <input id="camperInput" type="number" defaultValue={1} min="1" onChange={handleChange} />
                 </ui.Flex>
                 <br />
                 <ui.Box center={true} background="primary">
