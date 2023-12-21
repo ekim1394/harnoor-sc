@@ -284,12 +284,16 @@ export function WeeklyList(props) {
                 var endDate = date[1].toString().substring(4, 10)
                 return (
                     <Base as='li' key={startDate.replace(/ /g, '')}>
+                        {startDate === 'Jul 01' ? <b>40% discount!</b> : ""}
+                        <br />
                         <Base as='label' className={'PillList-item'}>
                             <input id={startDate} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
                             <span className="PillList-label">
                                 {startDate} - {endDate}
                             </span>
                         </Base>
+                        <br/>
+                        {startDate === 'Jul 01' ? <b>Closed 7/4 & 7/5</b> : ""}
                         <br />
                         <input type="checkbox" id={startDate + "-precare"} name="precare" onChange={props.handlePrePostCare} />
                         <span>Pre-care 8-9am $50</span>

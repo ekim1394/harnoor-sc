@@ -9,27 +9,36 @@ import axios from 'axios'
 export default function Schedule(props) {
     const { contentfulSchedule } = props.data
     const [checkedList, setCheckedList] = React.useState([]);
+
     const [campers, setCampers] = React.useState(1);
+    const camperRef = React.useRef(campers)
+
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef(totalPrice)
-    const camperRef = React.useRef(campers)
-    const [dates] = React.useState({ today: new Date() })
+    
     const [membershipSelected, setMembershipSelected] = React.useState(false);
     const membershipPrice = 6000
-
+    
+    const [dates] = React.useState({ today: new Date() })
+    
     React.useEffect(() => {
+        // Keep ref of total price
         priceRef.current = totalPrice
     }, [totalPrice])
 
     React.useEffect(() => {
+        // Keep ref of camper count
         camperRef.current = campers
     }, [campers])
 
     React.useEffect(() => {
+        // Reload page every hour
+        setTimeout(function () {
+            window.location.reload();
+        }, 3600000);
+    }, []);
 
-    }, [dates])
-
-    const calcWeeklyDiscount = (numWeeks) => {
+    const calcWeeklyPrice = (numWeeks) => {
         let price;
         if (numWeeks <= 3) {
             price = 435
@@ -54,25 +63,36 @@ export default function Schedule(props) {
         }
     }
 
-    const calcTotalPrice = (campers, numWeeks) => {
+    const calcTotalPrice = (campers, selectedDates) => {
+        let numWeeks = selectedDates.length
         if (numWeeks === 0) {
             return 0
         }
-        let weeklyDiscount = calcWeeklyDiscount(numWeeks)
-        console.log(campers, weeklyDiscount, numWeeks)
+        let weeklyPrice = calcWeeklyPrice(numWeeks)
+        let totalPrice = 0
         switch (campers) {
             case 0:
             case '0':
-                return 0;
+                return totalPrice;
             case 1:
             case '1':
-                return weeklyDiscount * numWeeks * parseInt(campers)
+                totalPrice = weeklyPrice * numWeeks * parseInt(campers)
+                return calcExceptions(totalPrice, selectedDates, weeklyPrice)
             case '2':
-                return Math.ceil(weeklyDiscount * .95) * numWeeks * parseInt(campers)
+                totalPrice = Math.ceil(weeklyPrice * .95) * numWeeks * parseInt(campers)
+                return calcExceptions(totalPrice, selectedDates, weeklyPrice)
             default:
-                return Math.ceil(weeklyDiscount * .90) * numWeeks * parseInt(campers)
+                totalPrice = Math.ceil(weeklyPrice * .90) * numWeeks * parseInt(campers)
+                return calcExceptions(totalPrice, selectedDates, weeklyPrice)
 
         }
+    }
+
+    const calcExceptions = (totalPrice, selectedDates, weeklyPrice) => {
+        if (selectedDates.includes('Summer Session 2:Jul 01')) {
+            return totalPrice - weeklyPrice + (weeklyPrice * .40)
+        }
+        return totalPrice
     }
 
     const handleSelect = (event) => {
@@ -92,7 +112,7 @@ export default function Schedule(props) {
         selected_list.sort((a, b) => new Date(a.split(':')[1]) - new Date(b.split(':')[1]))
         setCheckedList([...selected_list]);
 
-        let totalPrice = calcTotalPrice(campers, selected_list.length)
+        let totalPrice = calcTotalPrice(campers, selected_list)
         setTotalPrice(totalPrice)
     };
 
