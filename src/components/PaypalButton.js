@@ -9,7 +9,7 @@ export function PaypalButton(props) {
         <PayPalScriptProvider options={
             {
                 clientId: `${process.env.GATSBY_PAYPAL_CLIENT_ID}`,
-                "enable-funding": "venmo",
+                "merchantId": "info@physiokids.com"
             }
         }>
             <PayPalButtons style={{ color: "blue", shape: "pill", disableMaxWidth: false }} className="paypalButton"
