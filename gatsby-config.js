@@ -26,6 +26,7 @@ module.exports = {
         "gatsby-transformer-sharp",
         "gatsby-plugin-vanilla-extract",
         "gatsby-plugin-netlify",
+        "gatsby-plugin-material-ui",
         {
             resolve: "gatsby-plugin-manifest",
             options: {

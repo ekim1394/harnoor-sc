@@ -285,7 +285,7 @@ export function WeeklyList(props) {
                 return (
                     <Base as='li' key={startDate.replace(/ /g, '')}>
                         {startDate === 'Jul 01' ? <b>40% discount!</b> : ""}
-                        <br/>
+                        <br />
                         {startDate === 'Jul 01' ? <b>Closed 7/4 & 7/5</b> : ""}
                         <br />
                         <Base as='label' className={'PillList-item'}>
@@ -294,7 +294,7 @@ export function WeeklyList(props) {
                                 {startDate} - {endDate}
                             </span>
                         </Base>
-                        <br/>
+                        <br />
                         <input type="checkbox" id={startDate + "-precare"} name="precare" onChange={props.handlePrePostCare} />
                         <span>Pre-care 8-9am $50</span>
                         <br />
