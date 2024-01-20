@@ -15,12 +15,12 @@ export default function Schedule(props) {
 
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef(totalPrice)
-    
+
     const [membershipSelected, setMembershipSelected] = React.useState(false);
     const membershipPrice = 6000
-    
+
     const [dates] = React.useState({ today: new Date() })
-    
+
     React.useEffect(() => {
         // Keep ref of total price
         priceRef.current = totalPrice
@@ -267,7 +267,7 @@ export default function Schedule(props) {
                 <ui.Subhead center={true}>Total Price: ${totalPrice}
                 </ui.Subhead>
                 {(checkedList.length > 0 || membershipSelected) && totalPrice > 0 &&
-                    <PaypalButton createOrder={createOrder} onApprove={onApprove} onClick={onClick} onError={onError} />}
+                    <PaypalButton createOrder={createOrder} onApprove={onApprove} onClick={onClick} onError={onError} amount={totalPrice} />}
             </ui.Container>
             <footer>
                 <ui.Flex variant='center'>
