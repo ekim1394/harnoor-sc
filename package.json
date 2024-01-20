@@ -18,8 +18,10 @@
     "dependencies": {
         "@contentful/rich-text-html-renderer": "^15.11.1",
         "@emotion/react": "^11.11.3",
+        "@emotion/styled": "^11.11.0",
         "@fontsource/dm-mono": "^4.5.9",
         "@fontsource/dm-sans": "^4.5.8",
+        "@mui/material": "^5.15.5",
         "@netlify/functions": "^1.6.0",
         "@paypal/react-paypal-js": "^8.1.1",
         "@popperjs/core": "^2.11.8",
@@ -33,7 +35,6 @@
         "gatsby": "^5.0.0",
         "gatsby-plugin-image": "^3.0.0",
         "gatsby-plugin-manifest": "^5.0.0",
-        "gatsby-plugin-material-ui": "^4.0.2",
         "gatsby-plugin-modal-routing": "^1.2.0",
         "gatsby-plugin-netlify": "^5.1.0",
         "gatsby-plugin-sharp": "^5.0.0",
