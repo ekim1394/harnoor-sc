@@ -160,7 +160,6 @@ export default function Schedule(props) {
             const bccEmail = isDev()
                 ? "simplyeugene94@gmail.com"
                 : "info@physio-kids.com"
-            console.log(weeksRef.current)
             axios
                 .post(`${window.location.href}.netlify/functions/email`, {
                     recipient: details.payer.email_address,
@@ -168,7 +167,7 @@ export default function Schedule(props) {
                     bccEmail,
                     camperCnt: campers,
                     membership: membershipSelected,
-                    weeks: weeksRef,
+                    weeks: weeksRef.current,
                 })
                 .then((response) => {
                     window.location.replace(process.env.GATSBY_CONFIRM_REDIRECT)
