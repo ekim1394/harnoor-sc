@@ -13,10 +13,8 @@ export default function Schedule(props) {
     const [weeks, setWeeks] = React.useState([])
 
     const [campers, setCampers] = React.useState(1)
-    const camperRef = React.useRef(campers)
 
     const [totalPrice, setTotalPrice] = React.useState(0)
-    const priceRef = React.useRef(totalPrice)
 
     const [membershipSelected, setMembershipSelected] = React.useState(false)
     const membershipPrice = 6000
@@ -24,14 +22,14 @@ export default function Schedule(props) {
     const [dates] = React.useState({ today: new Date() })
 
     React.useEffect(() => {
-        // Keep ref of total price
-        priceRef.current = totalPrice
-    }, [totalPrice])
-
-    React.useEffect(() => {
-        // Keep ref of camper count
-        camperRef.current = campers
-    }, [campers])
+        if (membershipSelected) {
+            let totalPrice = membershipPrice * campers
+            setTotalPrice(totalPrice)
+        } else {
+            let totalPrice = calcTotalPrice(weeks)
+            setTotalPrice(totalPrice)
+        }
+    }, [membershipSelected, campers, weeks])
 
     React.useEffect(() => {
         // Reload page every hour
@@ -43,6 +41,7 @@ export default function Schedule(props) {
     React.useEffect(() => {
         const selectedWeeks = []
         if (membershipSelected) {
+            setWeeks([])
             return
         }
         checkedList.forEach(date => {
@@ -55,7 +54,7 @@ export default function Schedule(props) {
             selectedWeeks.push(d)
         })
         setWeeks(selectedWeeks)
-    }, [totalPrice, checkedList, membershipSelected])
+    }, [membershipSelected, checkedList])
 
     function checkSelectedCare(startDate, careType) {
         let careTypeSelect = document.getElementById(`${startDate}-${careType}`)
@@ -88,35 +87,20 @@ export default function Schedule(props) {
         }
     }
 
-    const calcTotalPrice = (campers, selectedDates) => {
-        let numWeeks = selectedDates.length
-        if (numWeeks === 0) {
-            return 0
-        }
-        let weeklyPrice = calcWeeklyPrice(numWeeks)
+    const calcTotalPrice = (weeks) => {
+        console.log(weeks)
+        const weeklyPrice = calcWeeklyPrice(weeks.length)
         let totalPrice = 0
-        switch (campers) {
-            case 0:
-            case "0":
-                return totalPrice
-            case 1:
-            case "1":
-                totalPrice = weeklyPrice * numWeeks * parseInt(campers)
-                return calcExceptions(totalPrice, selectedDates, weeklyPrice)
-            case "2":
-                totalPrice =
-                    Math.ceil(weeklyPrice * 0.95) * numWeeks * parseInt(campers)
-                return calcExceptions(totalPrice, selectedDates, weeklyPrice)
-            default:
-                totalPrice = Math.ceil(weeklyPrice * 0.9) * numWeeks * parseInt(campers)
-                return calcExceptions(totalPrice, selectedDates, weeklyPrice)
-        }
-    }
-
-    const calcExceptions = (totalPrice, selectedDates, weeklyPrice) => {
-        if (selectedDates.includes("Summer Session 2:Jul 01")) {
-            return totalPrice - weeklyPrice + weeklyPrice * 0.4
-        }
+        weeks.forEach(week => {
+            const precarePrice = week.precare ? 50 : 0
+            const postcarePrice = week.postcare ? 100 : 0
+            const price = weeklyPrice + precarePrice + postcarePrice
+            if (week.dates === "Jul 01") {
+                totalPrice += price * 0.4
+            } else {
+                totalPrice += price
+            }
+        })
         return totalPrice
     }
 
@@ -138,27 +122,17 @@ export default function Schedule(props) {
             (a, b) => new Date(a.split(":")[1]) - new Date(b.split(":")[1])
         )
         setCheckedList([...selected_list])
-
-        let totalPrice = calcTotalPrice(campers, selected_list)
-        setTotalPrice(totalPrice)
     }
 
     const handleChange = (event) => {
-        if (membershipSelected) {
-            setCampers(event.target.value)
-            setTotalPrice(membershipPrice * event.target.value)
-        } else {
-            setCampers(event.target.value)
-            var totalPrice = calcTotalPrice(event.target.value, checkedList.length)
-            setTotalPrice(totalPrice)
-        }
+        setCampers(event.target.value)
     }
 
     function createOrder(data, actions, err) {
         return actions.order.create({
             purchase_units: [
                 {
-                    amount: { value: priceRef.current },
+                    amount: { value: totalPrice },
                 },
             ],
             application_context: {
@@ -203,7 +177,7 @@ export default function Schedule(props) {
     }
 
     function onClick() {
-        console.debug("When clicked, amount was", priceRef.current)
+        console.debug("When clicked, amount was", totalPrice)
     }
 
     function handleMembershipSelect() {
@@ -211,11 +185,7 @@ export default function Schedule(props) {
         let toggle = !membershipSelected
         setMembershipSelected(toggle)
         // Set New Price
-        if (toggle) {
-            let totalPrice = membershipPrice * camperRef.current
-            setTotalPrice(totalPrice)
-        } else {
-            setTotalPrice(0)
+        if (!toggle) {
             setCheckedList([])
         }
     }
@@ -223,20 +193,17 @@ export default function Schedule(props) {
     function handleCareType(ev) {
         let startDate = ev.target.id.split("-")[0]
         let careType = ev.target.id.split("-")[1]
-        let price = careType === "precare" ? 50 : 100
         let dateSelect = document.getElementById(startDate)
         if (!dateSelect.checked) {
             // Block selection if week is not set
             document.getElementById(ev.target.id).checked = false
             return
         }
-        if (campers > 0) {
-            if (ev.target.checked) {
-                setTotalPrice(totalPrice + price)
-            } else {
-                setTotalPrice(totalPrice - price)
-            }
-        }
+        const updatedWeek = weeks.find(x => x.dates === startDate)
+        updatedWeek[careType] = ev.target.checked
+        setWeeks(weeks.map(week => {
+            return week.dates === startDate ? updatedWeek : week
+        }))
     }
 
     let environment = ""
