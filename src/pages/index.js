@@ -142,13 +142,26 @@ export default function Schedule(props) {
             }
         })
     }
-
+    function isDev() {
+        if (process.env.GATSBY_BRANCH) {
+            if (process.env.GATSBY_BRANCH !== "main") {
+                return false
+            }
+            return true
+        }
+        return true
+    }
     function onApprove(data, actions) {
         return actions.order.capture().then(function (details) {
             console.log(details.payer)
+            const bccEmail = isDev() ? "simplyeugene94@gmail.com" : "info@physio-kids.com"
             axios.post(`${window.location.href}.netlify/functions/email`, {
-                "recipient": details.payer.email_address,
-                "name": details.payer.name.given_name
+                recipient: details.payer.email_address,
+                name: details.payer.name.given_name,
+                bccEmail,
+                camperCnt: campers,
+                membership: membershipSelected,
+                weeks: checkedList
             }).then((response) => {
                 console.log(response)
                 window.location.replace(process.env.GATSBY_CONFIRM_REDIRECT)

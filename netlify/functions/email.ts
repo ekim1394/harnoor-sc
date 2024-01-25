@@ -1,6 +1,6 @@
 const client = require('@sendgrid/mail');
 const {
-    SENDGRID_API_KEY,
+    SENDGRID_API_KEY
 } = process.env;
 const fs = require('fs')
 const glob = require('glob')
@@ -10,25 +10,24 @@ const path = require('path')
 
 
 exports.handler = async function (event, context, callback) {
-    const { recipient, name } = JSON.parse(event.body);
+    const { recipient, name, bccEmail, camperCnt, membership, weeks } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
-    console.log(event)
 
-    function forms2attachments () {
-        var attachments : object[] = []
+    function forms2attachments() {
+        var attachments: object[] = []
         glob.sync('./forms/**.pdf').forEach(file => {
             attachments.push(
-                { 
-                    content: fs.readFileSync(file).toString("base64"), 
+                {
+                    content: fs.readFileSync(file).toString("base64"),
                     filename: file.split('/').pop(),
-                    type: 'application/pdf', 
-                    disposition: 'attachment' 
+                    type: 'application/pdf',
+                    disposition: 'attachment'
                 }
             )
         });
         return attachments;
-    }    
-    
+    }
+
     const data = {
         from: 'info@physio-kids.com',
         replyTo: 'info@physio-kids.com',
@@ -37,9 +36,12 @@ exports.handler = async function (event, context, callback) {
             to: recipient,
             dynamic_template_data: {
                 "firstName": name,
-                "formLink": "https://form.jotform.com/232527821060045"
+                "formLink": "https://form.jotform.com/232527821060045",
+                camperCnt,
+                membership,
+                weeks
             },
-            bcc: 'info@physio-kids.com'
+            bcc: bccEmail
         }],
         attachments: forms2attachments()
     };
