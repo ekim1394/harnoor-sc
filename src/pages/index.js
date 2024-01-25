@@ -51,7 +51,7 @@ export default function Schedule(props) {
         checkedList.forEach(date => {
             const startDate = date.split(':')[1]
             const d = {
-                dates: startDate,
+                dates: document.getElementById(`${startDate}-span`).innerHTML,
                 precare: checkSelectedCare(startDate, 'precare'),
                 postcare: checkSelectedCare(startDate, 'postcare')
             }

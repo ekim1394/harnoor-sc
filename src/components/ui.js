@@ -290,7 +290,7 @@ export function WeeklyList(props) {
                         <br />
                         <Base as='label' className={'PillList-item'}>
                             <input id={startDate} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
-                            <span className="PillList-label">
+                            <span id={startDate + '-span'} className="PillList-label">
                                 {startDate} - {endDate}
                             </span>
                         </Base>
