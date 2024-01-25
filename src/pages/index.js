@@ -243,9 +243,6 @@ export default function Schedule(props) {
     if (isDev()) {
         environment = `Running on ${process.env.NODE_ENV
             } with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}`
-    } else {
-        environment = `Running on ${process.env.GATSBY_BRANCH
-            } with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}`
     }
 
     return (
