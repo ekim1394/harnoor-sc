@@ -10,6 +10,7 @@ const path = require('path')
 
 
 exports.handler = async function (event, context, callback) {
+    console.log(event)
     const { recipient, name, bccEmail, camperCnt, membership, weeks } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
 
