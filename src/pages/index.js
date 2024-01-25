@@ -55,7 +55,7 @@ export default function Schedule(props) {
             selectedWeeks.push(d)
         })
         setWeeks(selectedWeeks)
-    }, [totalPrice])
+    }, [totalPrice, checkedList, membershipSelected])
 
     function checkSelectedCare(startDate, careType) {
         let careTypeSelect = document.getElementById(`${startDate}-${careType}`)
@@ -159,7 +159,6 @@ export default function Schedule(props) {
             purchase_units: [
                 {
                     amount: { value: priceRef.current },
-                    payee: { email_address: "info@physiokids.com" },
                 },
             ],
             application_context: {
@@ -170,7 +169,7 @@ export default function Schedule(props) {
 
     function isDev() {
         if (process.env.GATSBY_BRANCH) {
-            if (process.env.GATSBY_BRANCH !== "main") {
+            if (process.env.GATSBY_BRANCH === "main") {
                 return false
             }
             return true
