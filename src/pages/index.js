@@ -11,10 +11,12 @@ export default function Schedule(props) {
 
     // {startDate: {precare: true, postcare: true}}
     const [weeks, setWeeks] = React.useState([])
+    const weeksRef = React.useRef()
 
     const [campers, setCampers] = React.useState(1)
 
     const [totalPrice, setTotalPrice] = React.useState(0)
+    const priceRef = React.useRef()
 
     const [membershipSelected, setMembershipSelected] = React.useState(false)
     const membershipPrice = 6000
@@ -24,9 +26,11 @@ export default function Schedule(props) {
     React.useEffect(() => {
         if (membershipSelected) {
             let totalPrice = membershipPrice * campers
+            priceRef.current = totalPrice
             setTotalPrice(totalPrice)
         } else {
             let totalPrice = calcTotalPrice(weeks)
+            priceRef.current = totalPrice
             setTotalPrice(totalPrice)
         }
     }, [membershipSelected, campers, weeks])
@@ -53,6 +57,7 @@ export default function Schedule(props) {
             }
             selectedWeeks.push(d)
         })
+        weeksRef.current = selectedWeeks
         setWeeks(selectedWeeks)
     }, [membershipSelected, checkedList])
 
@@ -88,7 +93,6 @@ export default function Schedule(props) {
     }
 
     const calcTotalPrice = (weeks) => {
-        console.log(weeks)
         const weeklyPrice = calcWeeklyPrice(weeks.length)
         let totalPrice = 0
         weeks.forEach(week => {
@@ -132,7 +136,7 @@ export default function Schedule(props) {
         return actions.order.create({
             purchase_units: [
                 {
-                    amount: { value: totalPrice },
+                    amount: { value: priceRef.current },
                 },
             ],
             application_context: {
@@ -156,6 +160,7 @@ export default function Schedule(props) {
             const bccEmail = isDev()
                 ? "simplyeugene94@gmail.com"
                 : "info@physio-kids.com"
+            console.log(weeksRef.current)
             axios
                 .post(`${window.location.href}.netlify/functions/email`, {
                     recipient: details.payer.email_address,
@@ -163,7 +168,7 @@ export default function Schedule(props) {
                     bccEmail,
                     camperCnt: campers,
                     membership: membershipSelected,
-                    weeks,
+                    weeks: weeksRef,
                 })
                 .then((response) => {
                     window.location.replace(process.env.GATSBY_CONFIRM_REDIRECT)
@@ -201,9 +206,11 @@ export default function Schedule(props) {
         }
         const updatedWeek = weeks.find(x => x.dates === startDate)
         updatedWeek[careType] = ev.target.checked
-        setWeeks(weeks.map(week => {
+        const updatedWeeks = weeks.map(week => {
             return week.dates === startDate ? updatedWeek : week
-        }))
+        })
+        weeksRef.current = updatedWeeks
+        setWeeks(updatedWeeks)
     }
 
     let environment = ""
