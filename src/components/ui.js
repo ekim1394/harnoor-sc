@@ -295,10 +295,10 @@ export function WeeklyList(props) {
                             </span>
                         </Base>
                         <br />
-                        <input type="checkbox" id={startDate + "-precare"} name="precare" onChange={props.handlePrePostCare} />
+                        <input type="checkbox" id={startDate + "-precare"} name="precare" onChange={props.handleCareType} />
                         <span>Pre-care 8-9am $50</span>
                         <br />
-                        <input type="checkbox" id={startDate + "-postcare"} name="postcare" onChange={props.handlePrePostCare} />
+                        <input type="checkbox" id={startDate + "-postcare"} name="postcare" onChange={props.handleCareType} />
                         <span>Post-care 3-5:30pm $100</span>
                     </Base>
                 )
