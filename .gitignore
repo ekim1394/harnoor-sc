@@ -9,3 +9,8 @@ dist
 # Local Netlify folder
 .netlify
 sendgrid.env
+
+# Ignore misc data
+*.json
+!package.json
+!package-lock.json
