@@ -1,9 +1,12 @@
-import * as React from "react"
-import SEOHead from "../components/head"
-import { graphql } from "gatsby"
-import * as ui from "../components/ui"
-import { PaypalButton } from "../components/PaypalButton"
-import axios from "axios"
+import * as React from "react";
+import axios from "axios";
+import { graphql } from "gatsby";
+import { PaypalButton } from "../components/PaypalButton";
+import CamperInfo from '../components/camper-info';
+import SEOHead from "../components/head";
+import * as ui from "../components/ui";
+import { Typography } from "@mui/material";
+import CamperSelect from "../components/camper-select";
 
 export default function Schedule(props) {
     const { contentfulSchedule } = props.data
@@ -14,6 +17,7 @@ export default function Schedule(props) {
     const weeksRef = React.useRef()
 
     const [campers, setCampers] = React.useState(1)
+    const [camperInfo, setCamperInfo] = React.useState([])
 
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef()
@@ -23,25 +27,27 @@ export default function Schedule(props) {
 
     const [dates] = React.useState({ today: new Date() })
 
+    // Calculate total price on page load
     React.useEffect(() => {
         if (membershipSelected) {
             let totalPrice = membershipPrice * campers
             priceRef.current = totalPrice
             setTotalPrice(totalPrice)
         } else {
-            let totalPrice = calcTotalPrice(weeks)
+            let totalPrice = calcTotalPrice(weeks) * campers
             priceRef.current = totalPrice
             setTotalPrice(totalPrice)
         }
     }, [membershipSelected, campers, weeks])
 
+    // Reload page every hour
     React.useEffect(() => {
-        // Reload page every hour
         setTimeout(function () {
             window.location.reload()
         }, 3600000)
     }, [])
 
+    // Keep track of selected weeks
     React.useEffect(() => {
         const selectedWeeks = []
         if (membershipSelected) {
@@ -128,10 +134,6 @@ export default function Schedule(props) {
         setCheckedList([...selected_list])
     }
 
-    const handleChange = (event) => {
-        setCampers(event.target.value)
-    }
-
     function createOrder(data, actions, err) {
         return actions.order.create({
             purchase_units: [
@@ -157,9 +159,7 @@ export default function Schedule(props) {
 
     function onApprove(data, actions) {
         return actions.order.capture().then(function (details) {
-            const bccEmail = isDev()
-                ? "simplyeugene94@gmail.com"
-                : "info@physio-kids.com"
+            const bccEmail = process.env.BCC_EMAIL
             axios
                 .post(`${window.location.href}.netlify/functions/email`, {
                     recipient: details.payer.email_address,
@@ -203,7 +203,8 @@ export default function Schedule(props) {
             document.getElementById(ev.target.id).checked = false
             return
         }
-        const updatedWeek = weeks.find(x => x.dates === startDate)
+        console.log(weeks)
+        const updatedWeek = weeks.find(x => x.dates === document.getElementById(`${startDate}-span`).innerHTML)
         updatedWeek[careType] = ev.target.checked
         const updatedWeeks = weeks.map(week => {
             return week.dates === startDate ? updatedWeek : week
@@ -218,25 +219,27 @@ export default function Schedule(props) {
             } with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}`
     }
 
+    function handleCamperInfo(index, name, age) {
+        let camper = { name, age }
+        let updatedCamperInfo = camperInfo
+        updatedCamperInfo[index] = camper
+        setCamperInfo(updatedCamperInfo)
+    }
+
     return (
         <>
-            <ui.Container width="fullbleed">
+            <ui.Container width="narrow">
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
-                <ui.Flex variant="center" responsive={true}>
-                    <h1># of campers: </h1>
-                    <input
-                        id="camperInput"
-                        type="number"
-                        defaultValue={1}
-                        min="1"
-                        onChange={handleChange}
-                    />
-                </ui.Flex>
-                <br />
-                <ui.Box center={true} background="primary">
-                    <br />
+                <CamperSelect handleChange={(ev) => setCampers(ev.target.value)} />
+                {/* <ui.Flex variant="center" responsive={true}>
+                    <ui.Heading variant="h5">Please provide camper's name and age</ui.Heading>
+                </ui.Flex> */}
+                {/* {Array.from({ length: campers }).map((it, index) => {
+                    return <CamperInfo index={index} handleChange={handleCamperInfo} />
+                })} */}
+                <ui.Box center={true} background="primary" padding={3}>
                     <ui.Heading>Premium Founders Membership</ui.Heading>
-                    <ui.Container width="narrow">
+                    <ui.Container>
                         <ui.Subhead>${membershipPrice} per camper</ui.Subhead>
                         <ui.PillBox
                             id="membership"
@@ -248,11 +251,9 @@ export default function Schedule(props) {
                             private one hour consultation with Dr. Harnoor Singh
                         </ui.Text>
                     </ui.Container>
-                    <br />
                 </ui.Box>
-                <br />
                 {!membershipSelected && (
-                    <ui.Flex variant="column">
+                    <ui.Flex variant="center" marginY={4}>
                         <ui.Subhead>A La Carte: Choose Your Own Weeks</ui.Subhead>
                         {contentfulSchedule.summerCampSessions.map((dates) => {
                             return (
@@ -281,7 +282,7 @@ export default function Schedule(props) {
                         amount={totalPrice}
                     />
                 )}
-            </ui.Container>
+            </ui.Container >
             <footer>
                 <ui.Flex variant="center">{environment}</ui.Flex>
             </footer>
