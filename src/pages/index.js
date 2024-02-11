@@ -82,7 +82,6 @@ export default function Schedule(props) {
         })
         weeksRef.current = selectedWeeks
         setWeeks(selectedWeeks)
-        console.log(selectedWeeks)
     }, [membershipSelected, checkedList])
 
     // Update camperInfo list based on camperCnt
@@ -189,14 +188,11 @@ export default function Schedule(props) {
         return actions.order.capture().then((details) => {
             // Send Email
             sendEmail(details, campersCnt, membershipSelected, weeksRef.current)
-            saveRowToSheets(camperInfo, details.payer, weeksRef.current, membershipSelected, allWeeks).then(
-                () => {
-                    // Redirect to Thank You Page
-                    if (process.env.NODE_ENV !== "development") {
-                        window.location.replace(GATSBY_CONFIRM_REDIRECT);
-                    }
-                }
-            )
+            saveRowToSheets(camperInfo, details.payer, weeksRef.current, membershipSelected, allWeeks)
+            // Redirect to Thank You Page
+            if (process.env.NODE_ENV !== "development") {
+                window.location.replace(GATSBY_CONFIRM_REDIRECT);
+            }
         })
     }
 
