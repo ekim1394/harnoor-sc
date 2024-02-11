@@ -82,6 +82,7 @@ export default function Schedule(props) {
         })
         weeksRef.current = selectedWeeks
         setWeeks(selectedWeeks)
+        console.log(selectedWeeks)
     }, [membershipSelected, checkedList])
 
     // Update camperInfo list based on camperCnt
