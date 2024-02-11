@@ -87,7 +87,7 @@ class RegistrationRow {
 
 exports.handler = async function main(event, context, callback) {
     console.log(event.body)
-    const { registration, createTabs } = JSON.parse(event.body)
+    const { registration } = JSON.parse(event.body)
     // Generating google sheet client
     const googleSheetClient = await _getGoogleSheetClient();
     let dataToBeInserted: any[] = [];
@@ -101,19 +101,15 @@ exports.handler = async function main(event, context, callback) {
         dataToBeInserted.push(Object.values(row));
     });
 
+    console.log(dataToBeInserted)
     registration.weeks.forEach((week) => {
         let tabName = week.dates
-        if (createTabs) {
-            _checkIfTabExists(googleSheetClient, sheetId, tabName).then(() => {
-            });
-        } else {
-            let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
-            dataRowCopy.forEach((row) => {
-                row.push(week.precare)
-                row.push(week.postcare)
-            })
-            _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy).then(() => { console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`) });
-        }
+        let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
+        dataRowCopy.forEach((row) => {
+            row.push(week.precare)
+            row.push(week.postcare)
+        })
+        _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy).then(() => { console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`) });
     })
 
     return {
