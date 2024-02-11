@@ -101,22 +101,25 @@ exports.handler = async function main(event, context, callback) {
         dataToBeInserted.push(Object.values(row));
     });
 
-    console.log(dataToBeInserted)
-    registration.weeks.forEach(async (week) => {
-        let tabName = week.dates
-        console.log((tabName))
-        let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
-        console.log(dataRowCopy)
-        dataRowCopy.forEach((row) => {
-            row.push(week.precare)
-            row.push(week.postcare)
+    try {
+        await registration.weeks.forEach(async (week) => {
+            let tabName = week.dates
+            let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
+            dataRowCopy.forEach((row) => {
+                row.push(week.precare)
+                row.push(week.postcare)
+            })
+            await _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy)
+            console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`);
         })
-        console.log(dataRowCopy)
-        await _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy)
-        console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`);
-    })
-
-    return {
-        "statusCode": 200, "body": `Rows inserted for campers ${JSON.stringify(registration.campers)}`
+        return {
+            statusCode: 200, body: JSON.stringify({ msg: 'Data inserted successfully' })
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: err.code,
+            body: JSON.stringify({ msg: err }),
+        };
     }
 }
