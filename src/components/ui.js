@@ -179,11 +179,11 @@ export function WeeklyList(props) {
                             {startDate === 'Jul 01' ?
                                 <Tooltip title={'40% discount! Closed 7/4 & 7/5'} placement="top">
                                     <span id={startDate + '-span'} className="PillList-label">
-                                        {startDate} - {endDate}
+                                        {`${startDate} - ${endDate}`}
                                     </span>
                                 </Tooltip> :
                                 <span id={startDate + '-span'} className="PillList-label">
-                                    {startDate} - {endDate}
+                                    {`${startDate} - ${endDate}`}
                                 </span>
                             }
                         </Base>
