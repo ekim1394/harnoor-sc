@@ -102,16 +102,17 @@ exports.handler = async function main(event, context, callback) {
     });
 
     try {
-        await registration.weeks.forEach(async (week) => {
+        for (const week of registration.weeks) {
             let tabName = week.dates
             let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
             dataRowCopy.forEach((row) => {
                 row.push(week.precare)
                 row.push(week.postcare)
             })
-            await _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy)
+            const res = await _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy)
+            console.log(res.status)
             console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`);
-        })
+        }
         return {
             statusCode: 200, body: JSON.stringify({ msg: 'Data inserted successfully' })
         }
