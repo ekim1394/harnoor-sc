@@ -1,12 +1,14 @@
 import * as React from "react";
-import axios from "axios";
 import { graphql } from "gatsby";
 import { PaypalButton } from "../components/PaypalButton";
-import CamperInfo from '../components/camper-info';
+import CamperForm from '../components/camper-form';
 import SEOHead from "../components/head";
 import * as ui from "../components/ui";
-import { Typography } from "@mui/material";
 import CamperSelect from "../components/camper-select";
+import { GATSBY_BRANCH, GATSBY_CONFIRM_REDIRECT, GATSBY_PAYPAL_CLIENT_ID, NODE_ENV } from '../constants';
+import { sendEmail } from "../service/sendgrid.service";
+import { saveRowToSheets } from "../service/google-sheets.service";
+import { createWeeks } from "../utils";
 
 export default function Schedule(props) {
     const { contentfulSchedule } = props.data
@@ -15,9 +17,14 @@ export default function Schedule(props) {
     // {startDate: {precare: true, postcare: true}}
     const [weeks, setWeeks] = React.useState([])
     const weeksRef = React.useRef()
+    let allWeeks = []
+    contentfulSchedule.summerCampSessions.map((dates) => {
+        allWeeks = [...allWeeks, ...createWeeks(dates.startDate, dates.endDate)]
+        return allWeeks
+    })
 
-    const [campers, setCampers] = React.useState(1)
-    const [camperInfo, setCamperInfo] = React.useState([])
+    const [campersCnt, setCampersCnt] = React.useState(1)
+    const [camperInfo, setCamperInfo] = React.useState({})
 
     const [totalPrice, setTotalPrice] = React.useState(0)
     const priceRef = React.useRef()
@@ -30,15 +37,15 @@ export default function Schedule(props) {
     // Calculate total price on page load
     React.useEffect(() => {
         if (membershipSelected) {
-            let totalPrice = membershipPrice * campers
+            let totalPrice = membershipPrice * campersCnt
             priceRef.current = totalPrice
             setTotalPrice(totalPrice)
         } else {
-            let totalPrice = calcTotalPrice(weeks) * campers
+            let totalPrice = calcTotalPrice(weeks) * campersCnt
             priceRef.current = totalPrice
             setTotalPrice(totalPrice)
         }
-    }, [membershipSelected, campers, weeks])
+    }, [membershipSelected, campersCnt, weeks])
 
     // Reload page every hour
     React.useEffect(() => {
@@ -51,7 +58,17 @@ export default function Schedule(props) {
     React.useEffect(() => {
         const selectedWeeks = []
         if (membershipSelected) {
-            setWeeks([])
+            const weeks = []
+            allWeeks.forEach((elem) => {
+                const weekObj = {
+                    dates: `${elem[0]} - ${elem[1]}`,
+                    precare: true,
+                    postcare: true
+                }
+                weeks.push(weekObj)
+            })
+            weeksRef.current = weeks
+            setWeeks(weeks)
             return
         }
         checkedList.forEach(date => {
@@ -66,6 +83,16 @@ export default function Schedule(props) {
         weeksRef.current = selectedWeeks
         setWeeks(selectedWeeks)
     }, [membershipSelected, checkedList])
+
+    // Update camperInfo list based on camperCnt
+    React.useEffect(() => {
+        let numCampersInfo = Object.entries(camperInfo).length
+        if (numCampersInfo > campersCnt) {
+            for (let i = 0; i < (numCampersInfo - campersCnt); i++) {
+                delete camperInfo[numCampersInfo - i - 1]
+            }
+        }
+    }, [campersCnt, camperInfo])
 
     function checkSelectedCare(startDate, careType) {
         let careTypeSelect = document.getElementById(`${startDate}-${careType}`)
@@ -148,8 +175,8 @@ export default function Schedule(props) {
     }
 
     function isDev() {
-        if (process.env.GATSBY_BRANCH) {
-            if (process.env.GATSBY_BRANCH === "main") {
+        if (GATSBY_BRANCH) {
+            if (GATSBY_BRANCH === "main") {
                 return false
             }
             return true
@@ -158,21 +185,15 @@ export default function Schedule(props) {
     }
 
     function onApprove(data, actions) {
-        return actions.order.capture().then(function (details) {
-            const bccEmail = process.env.BCC_EMAIL
-            axios
-                .post(`${window.location.href}.netlify/functions/email`, {
-                    recipient: details.payer.email_address,
-                    name: details.payer.name.given_name,
-                    bccEmail,
-                    camperCnt: campers,
-                    membership: membershipSelected,
-                    weeks: weeksRef.current,
-                })
-                .then((response) => {
-                    window.location.replace(process.env.GATSBY_CONFIRM_REDIRECT)
-                })
-                .catch((err) => console.error(err))
+        return actions.order.capture().then((details) => {
+            // Send Email
+            sendEmail(details, campersCnt, membershipSelected, weeksRef.current)
+            saveRowToSheets(camperInfo, details.payer, weeksRef.current, membershipSelected, allWeeks)
+
+            // Redirect to Thank You Page
+            if (process.env.NODE_ENV !== "development") {
+                window.location.replace(GATSBY_CONFIRM_REDIRECT);
+            }
         })
     }
 
@@ -203,7 +224,6 @@ export default function Schedule(props) {
             document.getElementById(ev.target.id).checked = false
             return
         }
-        console.log(weeks)
         const updatedWeek = weeks.find(x => x.dates === document.getElementById(`${startDate}-span`).innerHTML)
         updatedWeek[careType] = ev.target.checked
         const updatedWeeks = weeks.map(week => {
@@ -215,11 +235,11 @@ export default function Schedule(props) {
 
     let environment = ""
     if (isDev()) {
-        environment = `Running on ${process.env.NODE_ENV
-            } with client_id ${process.env.GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}`
+        environment = `Running on ${NODE_ENV
+            } with client_id ${GATSBY_PAYPAL_CLIENT_ID.substring(0, 8)}`
     }
 
-    function handleCamperInfo(index, name, age) {
+    function handleCamperForm(index, name, age) {
         let camper = { name, age }
         let updatedCamperInfo = camperInfo
         updatedCamperInfo[index] = camper
@@ -230,13 +250,13 @@ export default function Schedule(props) {
         <>
             <ui.Container width="narrow">
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
-                <CamperSelect handleChange={(ev) => setCampers(ev.target.value)} />
-                {/* <ui.Flex variant="center" responsive={true}>
+                <CamperSelect handleChange={(ev) => setCampersCnt(ev.target.value)} />
+                <ui.Flex variant="center" responsive={true}>
                     <ui.Heading variant="h5">Please provide camper's name and age</ui.Heading>
-                </ui.Flex> */}
-                {/* {Array.from({ length: campers }).map((it, index) => {
-                    return <CamperInfo index={index} handleChange={handleCamperInfo} />
-                })} */}
+                </ui.Flex>
+                {Array.from({ length: campersCnt }).map((it, index) => {
+                    return <CamperForm key={`camperInfo${index}`} index={index} handleChange={handleCamperForm} />
+                })}
                 <ui.Box center={true} background="primary" padding={3}>
                     <ui.Heading>Premium Founders Membership</ui.Heading>
                     <ui.Container>
@@ -253,25 +273,28 @@ export default function Schedule(props) {
                     </ui.Container>
                 </ui.Box>
                 {!membershipSelected && (
-                    <ui.Flex variant="center" marginY={4}>
-                        <ui.Subhead>A La Carte: Choose Your Own Weeks</ui.Subhead>
+                    <>
+                        <ui.Text variant="subheadSmall" center>A La Carte: Choose Your Own Weeks</ui.Text>
+                        <ui.Text variant="small" center>Precare 8-9AM $50</ui.Text>
+                        <ui.Text variant="small" center>Postcare 3-5:30PM $100</ui.Text>
                         {contentfulSchedule.summerCampSessions.map((dates) => {
+                            const sessionWeeks = createWeeks(dates.startDate, dates.endDate)
                             return (
                                 <ui.Container key={dates.name}>
                                     <ui.WeeklyList
                                         name={dates.name}
                                         startDate={dates.startDate}
                                         endDate={dates.endDate}
+                                        weeks={sessionWeeks}
                                         handleSelect={handleSelect}
                                         handleCareType={handleCareType}
                                     />
-                                    <br style={{ clear: "both" }} />
-                                    <br style={{ clear: "both" }} />
                                 </ui.Container>
                             )
                         })}
-                    </ui.Flex>
+                    </>
                 )}
+                <br style={{ clear: "both" }} />
                 <ui.Subhead center={true}>Total Price: ${totalPrice}</ui.Subhead>
                 {(checkedList.length > 0 || membershipSelected) && totalPrice > 0 && (
                     <PaypalButton

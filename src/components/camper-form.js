@@ -8,13 +8,14 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 
-export default function CustomizedSelects(props) {
+export default function CamperForm(props) {
     const [age, setAge] = React.useState(7);
     const [name, setName] = React.useState("");
+    const { handleChange, index } = props;
 
     React.useEffect(() => {
-        props.handleChange(props.index, name, age);
-    }, [name, age]);
+        handleChange(index, name, age);
+    }, [name, age, handleChange, index]);
 
     const handleAgeChange = (event) => {
         setAge(event.target.value);
@@ -29,7 +30,7 @@ export default function CustomizedSelects(props) {
             <ui.Flex variant={"center"}>
                 <Typography variant="h5">Camper {props.index + 1}</Typography>
                 <FormControl sx={{ m: 2 }} variant="standard">
-                    <TextField id={"camperName" + props.index} label="Name" variant="filled" onChange={handleNameChange} value={name} />
+                    <TextField required id={"camperName" + props.index} label="Name" variant="filled" onChange={handleNameChange} value={name} />
                 </FormControl>
                 <FormControl sx={{ m: 2 }} variant="standard">
                     <InputLabel id="camperAgeLabel">Age</InputLabel>
@@ -41,7 +42,7 @@ export default function CustomizedSelects(props) {
                     >
                         {Array.from({ length: 6 }).map((it, index) => {
                             return (<MenuItem value={index + 7
-                            }>
+                            } key={`menuItem${index}`}>
                                 {index + 7}
                             </MenuItem>)
                         })}

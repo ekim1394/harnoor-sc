@@ -26,3 +26,7 @@
 .paypalButton {
     width: 500px;
 }
+
+li {
+    vertical-align: top;
+}

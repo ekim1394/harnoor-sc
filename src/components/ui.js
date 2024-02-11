@@ -1,9 +1,9 @@
 import { Link as GatsbyLink } from "gatsby"
-import { GatsbyImage, getImage } from "gatsby-plugin-image"
 import isAbsoluteURL from "is-absolute-url"
 import * as React from "react"
 import * as styles from "./ui.css"
 import "../styles/pillbox.css"
+import Tooltip from '@mui/material/Tooltip';
 
 export const cx = (...args) => args.filter(Boolean).join(" ")
 
@@ -137,10 +137,6 @@ export function Subhead({ ...props }) {
     return <Text as="h3" variant="subhead" {...props} />
 }
 
-export function Kicker({ ...props }) {
-    return <Text variant="kicker" {...props} />
-}
-
 export function Link({ to, href, ...props }) {
     const url = href || to || ""
     if (isAbsoluteURL(url)) {
@@ -152,102 +148,6 @@ export function Link({ to, href, ...props }) {
         )
     }
     return <GatsbyLink to={url} className={styles.link} {...props} />
-}
-
-export function NavLink({ ...props }) {
-    return <Base as={Link} cx={[styles.navlink]} {...props} />
-}
-
-export function NavButtonLink({ ...props }) {
-    return <Base as="button" cx={[styles.navButtonlink]} {...props} />
-}
-
-export function Button({ variant = "primary", ...props }) {
-    return <Base as={Link} cx={[styles.buttons[variant]]} {...props} />
-}
-
-export function ButtonList({ links = [{ id: "homeid", href: '/', text: 'Home' }], reversed = false, ...props }) {
-    const getVariant = (i) => {
-        if (reversed) {
-            return i === 0 ? "reversed" : "linkReversed"
-        }
-        return i === 0 ? "primary" : "link"
-    }
-    return (
-        <FlexList marginY={4} {...props}>
-            {links &&
-                links.map((link, i) => (
-                    <li key={link.id}>
-                        <Button href={link.href} variant={getVariant(i)}>
-                            {link.text}
-                        </Button>
-                    </li>
-                ))}
-        </FlexList>
-    )
-}
-
-export function CTALink(props) {
-    return <Base as={Link} cx={[styles.ctaLink]} {...props} />
-}
-
-export function LinkList({ links = [], ...props }) {
-    return (
-        <FlexList {...props}>
-            {links &&
-                links.map((link, i) => (
-                    <li key={link.id}>
-                        <CTALink href={link.href}>{link.text}</CTALink>
-                    </li>
-                ))}
-        </FlexList>
-    )
-}
-
-export function Blockquote(props) {
-    return <Base as="blockquote" cx={[styles.blockquote]} {...props} />
-}
-
-export function Avatar({ alt, image }) {
-    return (
-        <GatsbyImage alt={alt} image={getImage(image)} className={styles.avatar} />
-    )
-}
-
-export function Logo({ alt, image, size = "small" }) {
-    return (
-        <GatsbyImage
-            alt={alt}
-            image={getImage(image)}
-            className={styles.logos[size]}
-        />
-    )
-}
-
-export function Icon({ alt, image, size = "medium" }) {
-    return (
-        <GatsbyImage
-            alt={alt}
-            image={getImage(image)}
-            className={styles.icons[size]}
-        />
-    )
-}
-
-export function IconLink(props) {
-    return <NavLink cx={[styles.iconLink]} {...props} />
-}
-
-export function InteractiveIcon(props) {
-    return <Base as="button" cx={[styles.interactiveIcon]} {...props} />
-}
-
-export function VisuallyHidden(props) {
-    return <Base as="span" cx={[styles.visuallyHidden]} {...props} />
-}
-
-export function BlockLink(props) {
-    return <Link className={styles.blockLink} {...props} />
 }
 
 export function PillBox(props) {
@@ -265,42 +165,35 @@ export function PillBox(props) {
     )
 }
 export function WeeklyList(props) {
-    var start = props.startDate
-    var end = new Date(props.endDate)
-    var result = [];
-    // Copy start date
-    var current = new Date(start);
-    // While less than end date, add dates to result array
-    while (current <= end) {
-        var temp = new Date(current)
-        current.setDate(current.getDate() + 7);
-        result.push([temp, new Date(current - 1)]);
-    }
-    result.pop()
+    const result = props.weeks
     return (
         <FlexList variant='spaceBetween'>
             {result.map((date) => {
-                var startDate = date[0].toString().substring(4, 10)
-                var endDate = date[1].toString().substring(4, 10)
+                var startDate = date[0]
+                var endDate = date[1]
                 return (
-                    <Base as='li' key={startDate.replace(/ /g, '')}>
-                        {startDate === 'Jul 01' ? <b>40% discount!</b> : ""}
-                        <br />
-                        {startDate === 'Jul 01' ? <b>Closed 7/4 & 7/5</b> : ""}
-                        <br />
+                    <List as='li' key={startDate.replace(/ /g, '')}>
                         <Base as='label' className={'PillList-item'}>
                             <input id={startDate} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
-                            <span id={startDate + '-span'} className="PillList-label">
-                                {startDate} - {endDate}
-                            </span>
+
+                            {startDate === 'Jul 01' ?
+                                <Tooltip title={'40% discount! Closed 7/4 & 7/5'} placement="top">
+                                    <span id={startDate + '-span'} className="PillList-label">
+                                        {startDate} - {endDate}
+                                    </span>
+                                </Tooltip> :
+                                <span id={startDate + '-span'} className="PillList-label">
+                                    {startDate} - {endDate}
+                                </span>
+                            }
                         </Base>
                         <br />
                         <input type="checkbox" id={startDate + "-precare"} name="precare" onChange={props.handleCareType} />
-                        <span>Pre-care 8-9am $50</span>
+                        <span>Precare</span>
                         <br />
                         <input type="checkbox" id={startDate + "-postcare"} name="postcare" onChange={props.handleCareType} />
-                        <span>Post-care 3-5:30pm $100</span>
-                    </Base>
+                        <span>Postcare</span>
+                    </List>
                 )
             })}
         </FlexList>
