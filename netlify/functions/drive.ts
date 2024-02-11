@@ -1,11 +1,9 @@
 const { google } = require('googleapis');
 const { GoogleAuth } = require('google-auth-library');
 
-const serviceAccountKeyFile = '/tmp/google-api-credentials.json';
 const sheetId = process.env.GOOGLE_SHEET_ID
 const range = 'A:G'
 
-const fs = require('fs');
 const credentials = {
     type: 'service_account',
     project_id: 'physiokids',
@@ -19,14 +17,9 @@ const credentials = {
     client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL,
 };
 
-fs.writeFileSync(
-    serviceAccountKeyFile,
-    JSON.stringify(credentials, null, 2)
-);
-
 async function _getGoogleSheetClient() {
     const auth = new google.auth.GoogleAuth({
-        keyFile: serviceAccountKeyFile,
+        credentials: credentials,
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
     const authClient = await auth.getClient();
