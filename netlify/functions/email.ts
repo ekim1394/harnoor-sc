@@ -10,7 +10,7 @@ const path = require('path')
 
 
 exports.handler = async function (event, context, callback) {
-    console.log(event)
+    console.log(event.body)
     const { recipient, name, bccEmail, camperCnt, membership, weeks } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
 
@@ -29,6 +29,12 @@ exports.handler = async function (event, context, callback) {
         return attachments;
     }
 
+    if (process.env.NODE_ENV === 'development') {
+        return {
+            statusCode: 200, body: JSON.stringify({ msg: 'No email sent for development environment' })
+        }
+    }
+
     const data = {
         from: 'info@physio-kids.com',
         replyTo: 'info@physio-kids.com',
@@ -40,7 +46,7 @@ exports.handler = async function (event, context, callback) {
                 "formLink": "https://form.jotform.com/232527821060045",
                 camperCnt,
                 membership,
-                weeks
+                weeks,
             },
             bcc: bccEmail
         }],

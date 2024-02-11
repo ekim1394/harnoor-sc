@@ -2,9 +2,8 @@ const { google } = require('googleapis');
 const { GoogleAuth } = require('google-auth-library');
 
 const serviceAccountKeyFile = 'google-api-credentials.json';
-const sheetId = '1Rv-pxfeZdlZp68HMWISGRnXQm9UiGLk7rI2yOfvk7xY'
-const tabName = process.env.GATSBY_BRANCH === 'main' ? 'Summer2024' : 'Test'
-const range = 'A:P'
+const sheetId = process.env.GOOGLE_SHEET_ID
+const range = 'A:G'
 
 const fs = require('fs');
 const credentials = {
@@ -37,6 +36,41 @@ async function _getGoogleSheetClient() {
     });
 }
 
+async function _checkIfTabExists(googleSheetClient, sheetId, tabName) {
+    const res = await googleSheetClient.spreadsheets.get({
+        spreadsheetId: sheetId,
+    });
+    const sheet = res.data.sheets.find((sheet) => sheet.properties.title === tabName);
+    if (!sheet) {
+        await googleSheetClient.spreadsheets.batchUpdate({
+            spreadsheetId: sheetId,
+            resource: {
+                requests: [
+                    {
+                        addSheet: {
+                            properties: {
+                                title: tabName,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+        const res = await googleSheetClient.spreadsheets.values.append({
+            spreadsheetId: sheetId,
+            range: `${tabName}!A1`,
+            valueInputOption: 'USER_ENTERED',
+            insertDataOption: 'INSERT_ROWS',
+            resource: {
+                "majorDimension": "ROWS",
+                "values": [["Camper Name", "Camper Age", "Parent Name", "Parent Email", "Parent Phone", "Precare", "Postcare"]]
+            },
+        });
+        return res
+    }
+    return true
+}
+
 async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, data) {
     return await googleSheetClient.spreadsheets.values.append({
         spreadsheetId: sheetId,
@@ -50,34 +84,46 @@ async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dat
     });
 }
 
-interface RegistrationRow {
+class RegistrationRow {
     camperName: string; // name of camper
     age: number; // age of camper
+    parentName: string;
     parentEmail: string; // parent's email
     parentPhone: string; // parent's phone number
-    weeks: boolean[]; // array of weeks selected. 0th index is week 1, 1st index is week 2, etc.
 }
 
 exports.handler = async function main(event, context, callback) {
-    const { registration } = JSON.parse(event.body)
-    console.log(registration)
+    console.log(event.body)
+    const { registration, createTabs } = JSON.parse(event.body)
     // Generating google sheet client
     const googleSheetClient = await _getGoogleSheetClient();
-
     let dataToBeInserted: any[] = [];
-    registration.forEach((row: RegistrationRow) => {
-        let temp: any[] = [];
-        temp.push(row.camperName);
-        temp.push(row.age);
-        temp.push(row.parentEmail);
-        temp.push(row.parentPhone);
-        temp = temp.concat(row.weeks);
-        dataToBeInserted.push(temp);
+    registration.campers.forEach((camper) => {
+        let row = new RegistrationRow
+        row.camperName = camper.name
+        row.age = camper.age
+        row.parentName = registration.parentName
+        row.parentEmail = registration.parentEmail
+        row.parentPhone = registration.parentPhone
+        dataToBeInserted.push(Object.values(row));
     });
 
-    let res = await _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataToBeInserted);
+    registration.weeks.forEach((week) => {
+        let tabName = week.dates
+        if (createTabs) {
+            _checkIfTabExists(googleSheetClient, sheetId, tabName).then(() => {
+            });
+        } else {
+            let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
+            dataRowCopy.forEach((row) => {
+                row.push(week.precare)
+                row.push(week.postcare)
+            })
+            _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy).then(() => { console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`) });
+        }
+    })
 
     return {
-        "statusCode": 200, "body": JSON.stringify(res.data)
+        "statusCode": 200, "body": `Rows inserted for campers ${JSON.stringify(registration.campers)}`
     }
 }
