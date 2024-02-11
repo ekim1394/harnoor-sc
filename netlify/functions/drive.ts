@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const { GoogleAuth } = require('google-auth-library');
 
-const serviceAccountKeyFile = 'google-api-credentials.json';
+const serviceAccountKeyFile = '/tmp/google-api-credentials.json';
 const sheetId = process.env.GOOGLE_SHEET_ID
 const range = 'A:G'
 
