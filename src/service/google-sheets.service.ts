@@ -39,10 +39,8 @@ export function saveRowToSheets(camperInfo, payerDetails, weeks) {
         regInfo.weeks.push(value as CamperSchedule)
     }
     req.registration = regInfo;
-    console.log(req)
-
-    return axios.post('/.netlify/functions/drive',
+    axios.post('/.netlify/functions/drive',
         req
-    );
+    ).catch((err) => console.error(err));
 
 }
