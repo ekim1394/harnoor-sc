@@ -102,14 +102,18 @@ exports.handler = async function main(event, context, callback) {
     });
 
     console.log(dataToBeInserted)
-    registration.weeks.forEach((week) => {
+    registration.weeks.forEach(async (week) => {
         let tabName = week.dates
+        console.log((tabName))
         let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
+        console.log(dataRowCopy)
         dataRowCopy.forEach((row) => {
             row.push(week.precare)
             row.push(week.postcare)
         })
-        _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy).then(() => { console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`) });
+        console.log(dataRowCopy)
+        await _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dataRowCopy)
+        console.log(`Inserted ${dataRowCopy.length} rows for ${tabName}`);
     })
 
     return {
