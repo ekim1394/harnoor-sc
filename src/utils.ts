@@ -11,8 +11,9 @@ export function createWeeks(startDate, endDate) {
     // While less than end date, add dates to result array
     while (current <= end) {
         var temp = new Date(current)
-        current.setDate(current.getDate() + 7);
+        current.setDate(current.getDate() + 4);
         result.push([temp.toString().substring(4, 10), current.toString().substring(4, 10)]);
+        current.setDate(current.getDate() + 3);
     }
     result.pop()
     return result
