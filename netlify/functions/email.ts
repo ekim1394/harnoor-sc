@@ -11,7 +11,7 @@ const path = require('path')
 
 exports.handler = async function (event, context, callback) {
     console.log(event.body)
-    const { recipient, name, bccEmail, camperCnt, membership, weeks } = JSON.parse(event.body);
+    const { recipient, name, BCC_EMAIL, camperCnt, membership, weeks } = JSON.parse(event.body);
     client.setApiKey(SENDGRID_API_KEY);
 
     function forms2attachments() {
@@ -48,7 +48,7 @@ exports.handler = async function (event, context, callback) {
                 membership,
                 weeks,
             },
-            bcc: bccEmail
+            bcc: BCC_EMAIL
         }],
         attachments: forms2attachments()
     };
