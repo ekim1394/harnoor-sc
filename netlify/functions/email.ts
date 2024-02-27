@@ -1,6 +1,8 @@
 const client = require('@sendgrid/mail');
 const {
-    SENDGRID_API_KEY
+    SENDGRID_API_KEY,
+    BCC_EMAIL,
+    NODE_ENV
 } = process.env;
 const fs = require('fs')
 const glob = require('glob')
@@ -11,7 +13,8 @@ const path = require('path')
 
 exports.handler = async function (event, context, callback) {
     console.log(event.body)
-    const { recipient, name, bccEmail, camperCnt, membership, weeks } = JSON.parse(event.body);
+    const { recipient, name, camperCnt, membership, weeks } = JSON.parse(event.body);
+    console.log(`Sending email to ${recipient},${BCC_EMAIL}`)
     client.setApiKey(SENDGRID_API_KEY);
 
     function forms2attachments() {
@@ -29,7 +32,7 @@ exports.handler = async function (event, context, callback) {
         return attachments;
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (NODE_ENV === 'development') {
         return {
             statusCode: 200, body: JSON.stringify({ msg: 'No email sent for development environment' })
         }
@@ -48,7 +51,7 @@ exports.handler = async function (event, context, callback) {
                 membership,
                 weeks,
             },
-            bcc: bccEmail
+            bcc: BCC_EMAIL
         }],
         attachments: forms2attachments()
     };
