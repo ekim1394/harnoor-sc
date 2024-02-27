@@ -1,8 +1,7 @@
 import axios from "axios";
-import { GATSBY_CONFIRM_REDIRECT } from '../constants';
+import { GATSBY_CONFIRM_REDIRECT, bccEmail } from '../constants';
 
 export function sendEmail(details, campersCnt, membershipSelected, weeks) {
-    const bccEmail = process.env.BCC_EMAIL
     axios
         .post(`${window.location.href}.netlify/functions/email`, {
             recipient: details.payer.email_address,

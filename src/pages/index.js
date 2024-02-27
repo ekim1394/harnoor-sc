@@ -9,6 +9,7 @@ import { GATSBY_BRANCH, GATSBY_CONFIRM_REDIRECT, GATSBY_PAYPAL_CLIENT_ID, NODE_E
 import { sendEmail } from "../service/sendgrid.service";
 import { saveRowToSheets } from "../service/google-sheets.service";
 import { createWeeks } from "../utils";
+import { NODE_ENV } from "../constants";
 
 export default function Schedule(props) {
     const { contentfulSchedule } = props.data
@@ -190,7 +191,7 @@ export default function Schedule(props) {
             sendEmail(details, campersCnt, membershipSelected, weeksRef.current)
             saveRowToSheets(camperInfo, details.payer, weeksRef.current, membershipSelected, allWeeks)
             // Redirect to Thank You Page
-            if (process.env.NODE_ENV !== "development") {
+            if (NODE_ENV !== "development") {
                 window.location.replace(GATSBY_CONFIRM_REDIRECT);
             }
         })

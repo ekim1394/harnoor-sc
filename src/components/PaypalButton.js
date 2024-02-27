@@ -1,6 +1,7 @@
-import * as ui from "../components/ui"
+import * as ui from "./ui"
 import { PayPalButtons, PayPalMessages, PayPalScriptProvider } from "@paypal/react-paypal-js"
 import * as React from "react"
+import { GATSBY_PAYPAL_CLIENT_ID } from "../constants";
 
 
 export function PaypalButton(props) {
@@ -8,7 +9,7 @@ export function PaypalButton(props) {
     return <ui.Flex variant='center'>
         <PayPalScriptProvider options={
             {
-                clientId: `${process.env.GATSBY_PAYPAL_CLIENT_ID}`,
+                clientId: GATSBY_PAYPAL_CLIENT_ID,
                 enableFunding: 'venmo,paylater,card',
                 components: 'messages,buttons'
             }
