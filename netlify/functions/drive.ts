@@ -104,6 +104,9 @@ exports.handler = async function main(event, context, callback) {
     try {
         for (const week of registration.weeks) {
             let tabName = week.dates
+            if (tabName === 'Jul 01 - Jul 05*') {
+                tabName = 'Jul 01 - Jul 05'
+            }
             let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
             dataRowCopy.forEach((row) => {
                 row.push(week.precare)
