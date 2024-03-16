@@ -137,13 +137,11 @@ async function _validateDiscount(event, googleSheetClient) {
     try {
         const res = await googleSheetClient.spreadsheets.values.get({
             spreadsheetId: sheetId,
-            range: `Discounts!A2:D`,
+            range: `Discounts!A2:B`,
         });
         const discounts = res.data.values;
         for (const discountRow of discounts) {
-            const start = Date.parse(discountRow[2])
-            const end = Date.parse(discountRow[3])
-            if (discountRow[0] === code && today >= start && today < end) {
+            if (discountRow[0] === code) {
                 console.log(`Discount code ${code} is valid for ${discountRow[1]}% off`)
                 discount = discountRow[1]
                 return {
