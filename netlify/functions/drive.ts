@@ -101,7 +101,7 @@ async function _saveCamperInfoToSheet(event, googleSheetClient) {
     try {
         for (const week of registration.weeks) {
             let tabName;
-            if (process.env.NODE_ENV !== 'production') {
+            if (process.env.GATSBY_BRANCH !== 'main') {
                 tabName = 'test'
             } else {
                 tabName = week.dates
