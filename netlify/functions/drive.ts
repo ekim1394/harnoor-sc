@@ -85,11 +85,8 @@ class RegistrationRow {
     parentPhone: string; // parent's phone number
 }
 
-exports.handler = async function main(event, context, callback) {
-    console.log(event.body)
+async function _saveCamperInfoToSheet(event, googleSheetClient) {
     const { registration } = JSON.parse(event.body)
-    // Generating google sheet client
-    const googleSheetClient = await _getGoogleSheetClient();
     let dataToBeInserted: any[] = [];
     registration.campers.forEach((camper) => {
         let row = new RegistrationRow
@@ -103,9 +100,14 @@ exports.handler = async function main(event, context, callback) {
 
     try {
         for (const week of registration.weeks) {
-            let tabName = week.dates
-            if (tabName === 'Jul 01 - Jul 05*') {
-                tabName = 'Jul 01 - Jul 05'
+            let tabName;
+            if (process.env.NODE_ENV !== 'production') {
+                tabName = 'test'
+            } else {
+                tabName = week.dates
+                if (tabName === 'Jul 01 - Jul 05*') {
+                    tabName = 'Jul 01 - Jul 05'
+                }
             }
             let dataRowCopy = JSON.parse(JSON.stringify(dataToBeInserted))
             dataRowCopy.forEach((row) => {
@@ -120,10 +122,60 @@ exports.handler = async function main(event, context, callback) {
             statusCode: 200, body: JSON.stringify({ msg: 'Data inserted successfully' })
         }
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return {
             statusCode: err.code,
             body: JSON.stringify({ msg: err }),
         };
+    }
+}
+
+async function _validateDiscount(event, googleSheetClient) {
+    const { code } = JSON.parse(event.body)
+    let discount = 0;
+    let today = new Date().getTime();
+    try {
+        const res = await googleSheetClient.spreadsheets.values.get({
+            spreadsheetId: sheetId,
+            range: `Discounts!A2:D`,
+        });
+        const discounts = res.data.values;
+        for (const discountRow of discounts) {
+            const start = Date.parse(discountRow[2])
+            const end = Date.parse(discountRow[3])
+            if (discountRow[0] === code && today >= start && today < end) {
+                console.log(`Discount code ${code} is valid for ${discountRow[1]}% off`)
+                discount = discountRow[1]
+                return {
+                    statusCode: 200, body: JSON.stringify({ discount })
+                }
+            }
+        }
+        console.log('Discount code not found')
+        return {
+            statusCode: 404, body: JSON.stringify({ msg: 'Discount code not found', discount })
+        }
+    } catch (err) {
+        console.error(err)
+        return {
+            statusCode: err.code,
+            body: JSON.stringify({ msg: err }),
+        };
+    }
+
+}
+
+exports.handler = async function main(event, context, callback) {
+    console.log(event.body)
+    // Generating google sheet client
+    const googleSheetClient = await _getGoogleSheetClient();
+    const { type } = JSON.parse(event.body)
+
+    switch (type) {
+        case 'discount':
+            return await _validateDiscount(event, googleSheetClient)
+        case 'registration':
+        default:
+            return await _saveCamperInfoToSheet(event, googleSheetClient)
     }
 }

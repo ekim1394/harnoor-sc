@@ -1,11 +1,6 @@
 import * as React from 'react';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import * as ui from './ui';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import { InputLabel, MenuItem, FormControl, Select, TextField, Typography } from '@mui/material';
 
 
 export default function CamperForm(props) {

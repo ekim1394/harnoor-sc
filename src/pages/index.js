@@ -1,14 +1,17 @@
-import * as React from "react";
 import { graphql } from "gatsby";
+import * as React from "react";
 import { PaypalButton } from "../components/PaypalButton";
 import CamperForm from '../components/camper-form';
+import CamperSelect from "../components/camper-select";
+import DiscountForm from "../components/discount-form";
 import SEOHead from "../components/head";
 import * as ui from "../components/ui";
-import CamperSelect from "../components/camper-select";
+import { WeeklyList } from "../components/weekly-list";
 import { GATSBY_BRANCH, GATSBY_CONFIRM_REDIRECT, GATSBY_PAYPAL_CLIENT_ID, NODE_ENV } from '../constants';
+import { saveRowToSheets, verifyDiscountCodes } from "../service/google-sheets.service";
 import { sendEmail } from "../service/sendgrid.service";
-import { saveRowToSheets } from "../service/google-sheets.service";
 import { createWeeks } from "../utils";
+import { Alert, Snackbar } from "@mui/material";
 
 export default function Schedule(props) {
     const { contentfulSchedule } = props.data
@@ -33,19 +36,21 @@ export default function Schedule(props) {
     const membershipPrice = 6000
 
     const [dates] = React.useState({ today: new Date() })
+    const [discount, setDiscount] = React.useState(0);
+    const [alert, setAlert] = React.useState(false);
 
     // Calculate total price on page load
     React.useEffect(() => {
+        let totalPrice
         if (membershipSelected) {
-            let totalPrice = membershipPrice * campersCnt
+            totalPrice = membershipPrice * campersCnt
             priceRef.current = totalPrice
-            setTotalPrice(totalPrice)
         } else {
-            let totalPrice = calcTotalPrice(weeks) * campersCnt
+            totalPrice = calcTotalPrice(weeks) * campersCnt
             priceRef.current = totalPrice
-            setTotalPrice(totalPrice)
         }
-    }, [membershipSelected, campersCnt, weeks])
+        setTotalPrice(totalPrice * (1 - discount))
+    }, [membershipSelected, campersCnt, weeks, discount])
 
     // Reload page every hour
     React.useEffect(() => {
@@ -245,9 +250,33 @@ export default function Schedule(props) {
         setCamperInfo(updatedCamperInfo)
     }
 
+    function handleDiscount(code) {
+        verifyDiscountCodes(code)
+            .then((response) => {
+                let discount = Number(response.data.discount) / 100;
+                setDiscount(discount);
+                if (discount === 0) {
+                    setAlert({ severity: "error", message: "Invalid discount code" });
+                } else {
+                    setAlert({ severity: "success", message: `${discount * 100}% discount applied` });
+                }
+            })
+            .catch((err) => {
+                if (err.response.status === 404) {
+                    setAlert({ severity: "error", message: "Invalid discount code" });
+                }
+                console.error(err)
+            });
+    }
+
     return (
         <>
             <ui.Container width="narrow">
+                <Snackbar open={alert} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} autoHideDuration={3000} onClose={() => setAlert(false)}>
+                    <Alert onClose={() => setAlert(false)} severity={alert.severity}>
+                        {alert.message}
+                    </Alert>
+                </Snackbar>
                 <ui.Heading center={true}>{contentfulSchedule.name}</ui.Heading>
                 <CamperSelect handleChange={(ev) => setCampersCnt(ev.target.value)} />
                 <ui.Flex variant="center" responsive={true}>
@@ -280,7 +309,7 @@ export default function Schedule(props) {
                             const sessionWeeks = createWeeks(dates.startDate, dates.endDate)
                             return (
                                 <ui.Container key={dates.name}>
-                                    <ui.WeeklyList
+                                    <WeeklyList
                                         name={dates.name}
                                         startDate={dates.startDate}
                                         endDate={dates.endDate}
@@ -294,16 +323,19 @@ export default function Schedule(props) {
                     </>
                 )}
                 <br style={{ clear: "both" }} />
-                <ui.Subhead center={true}>Total Price: ${totalPrice}</ui.Subhead>
-                {(checkedList.length > 0 || membershipSelected) && totalPrice > 0 && (
-                    <PaypalButton
-                        createOrder={createOrder}
-                        onApprove={onApprove}
-                        onClick={onClick}
-                        onError={onError}
-                        amount={totalPrice}
-                    />
-                )}
+                <ui.Box center={true} background="clear" padding={3}>
+                    <ui.Subhead center={true}>Total Price: ${totalPrice}</ui.Subhead>
+                    <DiscountForm center={true} onSubmit={handleDiscount} />
+                    {(checkedList.length > 0 || membershipSelected) && totalPrice > 0 && (
+                        <PaypalButton
+                            createOrder={createOrder}
+                            onApprove={onApprove}
+                            onClick={onClick}
+                            onError={onError}
+                            amount={totalPrice}
+                        />
+                    )}
+                </ui.Box>
             </ui.Container >
             <footer>
                 <ui.Flex variant="center">{environment}</ui.Flex>

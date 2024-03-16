@@ -1,6 +1,7 @@
 import axios from "axios";
 
 class RegistrationRequest {
+    type = "registration"
     registration: RegistrationInfo
 }
 
@@ -42,5 +43,15 @@ export function saveRowToSheets(camperInfo, payerDetails, weeks) {
     axios.post('/.netlify/functions/drive',
         req
     ).catch((err) => console.error(err));
+}
 
+class DiscountRequest {
+    type = "discount"
+    code: string
+}
+
+export function verifyDiscountCodes(code: string): any {
+    let req = new DiscountRequest();
+    req.code = code;
+    return axios.post('/.netlify/functions/drive', req)
 }

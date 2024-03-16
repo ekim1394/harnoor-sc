@@ -3,7 +3,6 @@ import isAbsoluteURL from "is-absolute-url"
 import * as React from "react"
 import * as styles from "./ui.css"
 import "../styles/pillbox.css"
-import Tooltip from '@mui/material/Tooltip';
 
 export const cx = (...args) => args.filter(Boolean).join(" ")
 
@@ -162,40 +161,5 @@ export function PillBox(props) {
                 {props.value}
             </Base>
         </Base>
-    )
-}
-export function WeeklyList(props) {
-    const result = props.weeks
-    return (
-        <FlexList variant='spaceBetween'>
-            {result.map((date) => {
-                var startDate = date[0]
-                var endDate = date[1]
-                return (
-                    <List as='li' key={startDate.replace(/ /g, '')}>
-                        <Base as='label' className={'PillList-item'}>
-                            <input id={startDate} type="checkbox" name={props.name} value={startDate} onChange={props.handleSelect} />
-
-                            {startDate === 'Jul 01' ?
-                                <Tooltip title={'40% discount! Closed 7/4 & 7/5'} placement="top">
-                                    <span id={startDate + '-span'} className="PillList-label">
-                                        {`${startDate} - ${endDate}*`}
-                                    </span>
-                                </Tooltip> :
-                                <span id={startDate + '-span'} className="PillList-label">
-                                    {`${startDate} - ${endDate}`}
-                                </span>
-                            }
-                        </Base>
-                        <br />
-                        <input type="checkbox" id={startDate + "-precare"} name="precare" onChange={props.handleCareType} />
-                        <span>Precare</span>
-                        <br />
-                        <input type="checkbox" id={startDate + "-postcare"} name="postcare" onChange={props.handleCareType} />
-                        <span>Postcare</span>
-                    </List>
-                )
-            })}
-        </FlexList>
     )
 }
