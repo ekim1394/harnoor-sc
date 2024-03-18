@@ -27,7 +27,7 @@ interface CamperInfo {
 export function saveRowToSheets(camperInfo, payerDetails, weeks) {
     let req = new RegistrationRequest();
     const regInfo = new RegistrationInfo();
-    regInfo.parentPhone = payerDetails.phone;
+    regInfo.parentPhone = payerDetails.phone?.phone_number?.national_number.toString() || "";
     regInfo.parentEmail = payerDetails.email_address;
     regInfo.parentName = `${payerDetails.name.given_name} ${payerDetails.name.surname}`
     regInfo.campers = []
