@@ -44,12 +44,11 @@ export default function Schedule(props) {
         let totalPrice
         if (membershipSelected) {
             totalPrice = membershipPrice * campersCnt
-            priceRef.current = totalPrice
         } else {
             totalPrice = calcTotalPrice(weeks) * campersCnt
-            priceRef.current = totalPrice
         }
         totalPrice = totalPrice * (1 - discount)
+        priceRef.current = totalPrice
         setTotalPrice(totalPrice.toFixed(2))
     }, [membershipSelected, campersCnt, weeks, discount])
 
@@ -171,7 +170,7 @@ export default function Schedule(props) {
         return actions.order.create({
             purchase_units: [
                 {
-                    amount: { value: totalPrice },
+                    amount: { value: priceRef.current },
                 },
             ],
             application_context: {
