@@ -170,7 +170,7 @@ export default function Schedule(props) {
         return actions.order.create({
             purchase_units: [
                 {
-                    amount: { value: priceRef.current },
+                    amount: { value: totalPrice },
                 },
             ],
             application_context: {
