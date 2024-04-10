@@ -49,7 +49,8 @@ export default function Schedule(props) {
             totalPrice = calcTotalPrice(weeks) * campersCnt
             priceRef.current = totalPrice
         }
-        setTotalPrice(totalPrice * (1 - discount))
+        totalPrice = totalPrice * (1 - discount)
+        setTotalPrice(totalPrice.toFixed(2))
     }, [membershipSelected, campersCnt, weeks, discount])
 
     // Reload page every hour
