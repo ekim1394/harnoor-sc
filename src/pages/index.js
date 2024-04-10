@@ -48,7 +48,7 @@ export default function Schedule(props) {
             totalPrice = calcTotalPrice(weeks) * campersCnt
         }
         totalPrice = totalPrice * (1 - discount)
-        priceRef.current = totalPrice
+        priceRef.current = totalPrice.toFixed(2)
         setTotalPrice(totalPrice.toFixed(2))
     }, [membershipSelected, campersCnt, weeks, discount])
 
