@@ -32,7 +32,7 @@
         "@vanilla-extract/webpack-plugin": "^2.1.12",
         "axios": "^1.6.0",
         "bootstrap": "^5.3.1",
-        "gatsby": "^5.0.0",
+        "gatsby": "^5.13.6",
         "gatsby-plugin-image": "^3.0.0",
         "gatsby-plugin-manifest": "^5.0.0",
         "gatsby-plugin-modal-routing": "^1.2.0",
